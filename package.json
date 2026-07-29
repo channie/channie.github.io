@@ -1,0 +1,41 @@
+{
+  "name": "channie-org",
+  "version": "0.1.0",
+  "private": true,
+  "license": "UNLICENSED",
+  "type": "module",
+  "engines": {
+    "node": ">=22.12.0"
+  },
+  "scripts": {
+    "dev": "astro dev",
+    "start": "astro dev",
+    "build": "astro build",
+    "preview": "astro preview",
+    "check": "astro check",
+    "test": "vitest run",
+    "refresh:podcast": "node scripts/fetch-podcast.mjs",
+    "astro": "astro"
+  },
+  "dependencies": {
+    "@astrojs/mdx": "^7.0.4",
+    "@astrojs/rss": "^4.0.18",
+    "@astrojs/sitemap": "^3.7.3",
+    "@fontsource-variable/caveat": "^5.2.8",
+    "@fontsource-variable/hanken-grotesk": "^5.2.8",
+    "@fontsource/lxgw-wenkai-tc": "^5.2.9",
+    "@fontsource/newsreader": "^5.2.10",
+    "astro": "^7.1.4",
+    "remark-breaks": "^4.0.0"
+  },
+  "devDependencies": {
+    "@astrojs/check": "^0.9.9",
+    "@astrojs/markdown-remark": "^7.2.0",
+    "fontverter": "^2.0.0",
+    "jsdom": "^29.1.1",
+    "music-metadata": "^11.14.0",
+    "subset-font": "^2.5.0",
+    "typescript": "^6.0.3",
+    "vitest": "^4.1.8"
+  }
+}

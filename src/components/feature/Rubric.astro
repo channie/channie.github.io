@@ -1,0 +1,49 @@
+---
+/* ============================================================
+   Rubric — a feature section head.
+
+     <Rubric n="II">Powder</Rubric>
+
+   Renders a real <h2> so the document outline survives, with the
+   numeral and the rule as presentation. The numeral is optional.
+   ============================================================ */
+interface Props {
+  /** section numeral, e.g. "II" — presentational, omit if not wanted */
+  n?: string;
+}
+const { n }: Props = Astro.props;
+---
+
+<h2 class="rubric">
+  <span class="label">
+    {n && <span class="n">{n}.</span>}
+    <slot />
+  </span>
+  <span class="rule" aria-hidden="true"></span>
+</h2>
+
+<style>
+  .rubric {
+    display: flex;
+    align-items: center;
+    gap: var(--space-4);
+    margin: calc(var(--space-16) + var(--space-3)) 0 var(--space-8);
+  }
+  .label {
+    font-family: var(--font-sans-latin);
+    font-size: var(--text-xs);
+    font-weight: 700;
+    letter-spacing: var(--tracking-eyebrow);
+    text-transform: uppercase;
+    color: var(--accent);
+    white-space: nowrap;
+  }
+  .n {
+    opacity: 0.65;
+  }
+  .rule {
+    flex: 1;
+    height: 1px;
+    background: var(--line);
+  }
+</style>

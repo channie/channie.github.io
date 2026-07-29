@@ -1,0 +1,167 @@
+/* ============================================================
+   Channie.org — Design tokens
+   The single source of truth for color, type, spacing, radii,
+   shadows, and motion.
+
+   Two color "worlds": Terracotta is the default (on :root). Water
+   Lily is a documented alternate, applied with [data-theme="lily"]
+   (no UI toggle).
+
+   A11y note: --muted is 0.72 and --band-muted 0.90 for WCAG AA
+   contrast — keep them at least this opaque.
+   ============================================================ */
+
+:root {
+  /* ---- Typography families ----
+     Latin leads the stack (Newsreader / Hanken), so CJK glyphs — absent
+     from the Latin faces — fall through to LXGW WenKai TC (霞鶩文楷), a
+     warm handwriting-style kai face. Mixed strings like "百靈果 Book Club"
+     split automatically: Latin in Newsreader, Chinese in WenKai. */
+  --font-display: 'Newsreader', 'LXGW WenKai TC', Georgia, serif;
+  --font-sans: 'Hanken Grotesk', 'LXGW WenKai TC', system-ui, -apple-system, sans-serif;
+  /* Latin-only sans — no WenKai. For small UI chrome where a stray CJK
+     glyph should use the neutral system CJK sans, not WenKai's
+     handwriting kai. */
+  --font-sans-latin: 'Hanken Grotesk', system-ui, -apple-system, sans-serif;
+  /* Handwriting — Caveat for Latin, falling through to WenKai for CJK
+     (both read as "written by hand"). The face itself loads only on
+     pages that import @fontsource-variable/caveat (the Listening diary);
+     elsewhere the stack quietly falls back. */
+  --font-hand: 'Caveat Variable', 'LXGW WenKai TC', cursive;
+
+  /* ---- Type scale (CONTENT area only) ----
+     Semantic size tokens for the content components — page heads, prose,
+     cards, listing rows, players, etc. The chrome (top nav, footer, hero
+     quote) deliberately does NOT use these; it keeps its own fixed sizes.
+
+     Small text is fixed (labels stay legible); headings use clamp() so they
+     scale smoothly with the viewport but are capped well below the old
+     editorial sizes — so content reads calmer on desktop/laptop without
+     shrinking phones. Tune the values here in one place. */
+  --text-3xs: 9px; /* micro labels (cover kind, "soon") */
+  --text-2xs: 10.5px; /* tiny labels / secondary captions */
+  --text-xs: 11.5px; /* eyebrows, kickers, list heads */
+  --text-sm: 12.5px; /* meta, dates, tags, by-lines */
+  --text-md: 13px; /* secondary body, card excerpts */
+  --text-base: 14px; /* primary reading body (UI) */
+  --text-prose: clamp(15px, 0.5vw + 13px, 16px); /* long-form blog body (larger than UI base) */
+  --text-lg: clamp(16px, 0.6vw + 14px, 17px); /* card / tile / row titles */
+  --text-xl: clamp(18px, 1vw + 15px, 21px); /* notes, quotes, episode titles */
+  --text-2xl: clamp(21px, 1.6vw + 15px, 25px); /* section headings, post h2 */
+  --text-3xl: clamp(24px, 2.4vw + 15px, 31px); /* featured / show titles */
+  --text-4xl: clamp(29px, 3.4vw + 15px, 41px); /* page-head H1 */
+  --text-5xl: clamp(33px, 4vw + 16px, 45px); /* large display */
+  --text-6xl: clamp(38px, 5vw + 17px, 52px); /* cover initials */
+  /* Feature-article display size. Deliberately ABOVE the calm content scale:
+     it is used only by the feature layout's masthead headline, which sits on
+     a full-bleed photo and has to hold its own against the image. Do not use
+     it in the ordinary content flow. */
+  --text-7xl: clamp(42px, 7.2vw, 92px);
+
+  /* ---- Letter-spacing (tracking) for the uppercase "eyebrow" idiom ----
+     Two deliberate tiers, one source of truth so the family can't drift:
+     - --tracking-eyebrow: the standard eyebrow / section-label / kicker.
+     - --tracking-eyebrow-tight: the smallest micro-labels & chips, where
+       tighter tracking reads better.
+     Components pick a tier by role. The chrome (nav, footer, hero) and the
+     out-of-family tags (category 0.14em, postcard label) keep their own. */
+  --tracking-eyebrow: 0.2em;
+  --tracking-eyebrow-tight: 0.16em;
+
+  /* ---- Color: Terracotta (primary) ---- */
+  --bg: #f4e9d6;          /* page background — warm cream */
+  --card: #fbf3e3;        /* card surface — lighter cream */
+  --ink: #2a201a;         /* primary text — warm near-black */
+  --muted: rgba(42, 32, 26, 0.72);   /* secondary text */
+  --accent: #b92a0f;      /* carnelian — links, eyebrows, labels */
+  --accent2: #e0833a;     /* rajah — highlights, quote marks, focus ring */
+  --band: #a8350f;        /* terracotta band (podcast band / footer) */
+  --band-ink: #f7e4cc;    /* cream text on band */
+  --band-muted: rgba(247, 228, 204, 0.90); /* muted on band */
+  --line: rgba(42, 32, 26, 0.14);    /* hairline borders / dividers */
+  /* soft accent rule — the Reading spread's framed-entry bar (adapts per
+     theme via var(--accent), so it's defined once here). */
+  --accent-hairline: color-mix(in srgb, var(--accent) 24%, transparent);
+  --hero-base: #14100d;   /* hero photo darkening base / scrim */
+
+  /* ---- Podcast player ("Ink" scheme). Local to the player. ---- */
+  --slate: #241b16;       /* player body */
+  --slate-2: #1b1410;     /* episode list / inset panel */
+  --slate-3: #342620;     /* row hover / active */
+  --pl-ink: #f3ece0;      /* text on player */
+  --pl-muted: rgba(243, 236, 224, 0.60);
+  --pl-line: rgba(243, 236, 224, 0.14);
+  --pl-accent: #e5400d;   /* play button (+ glow) + scrubber fill */
+
+  /* ---- Spacing / page gutters ---- */
+  --gutter-phone: 24px;
+  --gutter-tablet: 40px;
+  --gutter-desktop: 56px;
+  /* Active gutter — overridden per container tier in global.css. */
+  --gutter: var(--gutter-phone);
+
+  /* generic spacing scale */
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 20px;
+  --space-6: 24px;
+  --space-8: 32px;
+  --space-10: 40px;
+  --space-12: 48px;
+  --space-16: 64px;
+
+  /* ---- Radii ---- */
+  --radius-card: 7px;     /* room / article cards */
+  --radius-media: 8px;    /* media & thumbnails (8–10) */
+  --radius-thumb: 10px;
+  --radius-player: 16px;  /* player card */
+  --radius-book: 6px;     /* book cover */
+  --radius-pill: 999px;   /* pills / chips / postcards / avatars */
+
+  /* ---- Shadows ---- */
+  --shadow-card-hover: 0 18px 40px -22px rgba(0, 0, 0, 0.42);
+  --shadow-cover: 0 24px 50px -20px rgba(0, 0, 0, 0.6);
+  --shadow-player: 0 30px 70px -36px rgba(20, 30, 28, 0.7);
+
+  /* ---- Motion ---- */
+  --ease: cubic-bezier(0.4, 0, 0.2, 1);
+  --dur-card: 0.4s;       /* card hover lift / image zoom (.3–.5s) */
+  --dur-nav: 0.28s;       /* nav underline */
+  --dur-arrow: 0.25s;     /* arrow-link nudge */
+  --dur-btn: 0.18s;       /* play / icon buttons (.16–.2s) */
+
+  /* ---- Focus ---- */
+  --focus-ring: 3px solid var(--accent2);
+  --focus-offset: 3px;
+
+  /* ---- Layout ---- */
+  --content-max: 880px;  /* content column width on desktop (hero stays full-bleed) */
+  /* Feature-article layout (posts with `presentation: feature`). The measure is
+     NARROWER than a standard post's column — a magazine feature keeps a tight
+     line length and buys its drama from the images breaking out around it.
+     --feature-max is the outer bound the breakout elements respect. */
+  --feature-measure: 600px;
+  --feature-max: 1240px;
+
+  color-scheme: light;
+}
+
+/* ============================================================
+   Water Lily — documented alternate (no UI toggle).
+   Apply with <html data-theme="lily"> to preview.
+   ============================================================ */
+[data-theme='lily'] {
+  --bg: #eef0d8;
+  --card: #f7f4d5;
+  --ink: #0a3323;
+  --muted: rgba(10, 51, 35, 0.72);   /* same AA contrast floor */
+  --accent: #105666;
+  --accent2: #c47e6f;
+  --band: #0a3323;
+  --band-ink: #f1efcf;
+  --band-muted: rgba(241, 239, 207, 0.90);
+  --line: rgba(10, 51, 35, 0.16);
+  --hero-base: #07211a;
+}

@@ -1,0 +1,96 @@
+---
+/* ============================================================
+   PlayerIcon — the shared transport glyphs for BOTH podcast players
+   (PodcastPlayer "Ink" + the homepage PodcastBand). One definition so
+   the artwork can't drift between the two surfaces.
+
+   The skip glyphs render their digits from SKIP_BACK / SKIP_FWD, so
+   the icon always matches what the player logic actually does.
+
+   Styling note: this component has no <style>, so parents size/color
+   the glyph via `currentColor` and `:global(svg)` (or by passing a
+   class, which Astro scopes for them — e.g. class="i-play").
+   ============================================================ */
+import { SKIP_BACK, SKIP_FWD } from '../lib/player';
+
+interface Props {
+  name: 'play' | 'pause' | 'back' | 'fwd' | 'mute';
+  class?: string;
+}
+const { name, class: cls } = Astro.props;
+---
+
+{
+  name === 'play' && (
+    <svg class={cls} viewBox="0 0 24 24" aria-hidden="true">
+      <path d="M7 4.5 L19 12 L7 19.5 Z" fill="currentColor" />
+    </svg>
+  )
+}
+{
+  name === 'pause' && (
+    <svg class={cls} viewBox="0 0 24 24" aria-hidden="true">
+      <path d="M7 5h3.2v14H7zM13.8 5H17v14h-3.2z" fill="currentColor" />
+    </svg>
+  )
+}
+{
+  name === 'back' && (
+    <svg
+      class={cls}
+      viewBox="0 0 24 24"
+      aria-hidden="true"
+      fill="none"
+      stroke="currentColor"
+      stroke-width="1.6"
+      stroke-linecap="round"
+      stroke-linejoin="round"
+    >
+      <path d="M12 3.6 A8.4 8.4 0 1 0 20.4 12" />
+      <path d="M12 3.6 L8.7 3.6 L10.2 6.3 Z" fill="currentColor" stroke="none" />
+      <text x="12" y="14.6" font-size="7" font-weight="700" fill="currentColor" stroke="none" text-anchor="middle">
+        {SKIP_BACK}
+      </text>
+    </svg>
+  )
+}
+{
+  name === 'fwd' && (
+    <svg
+      class={cls}
+      viewBox="0 0 24 24"
+      aria-hidden="true"
+      fill="none"
+      stroke="currentColor"
+      stroke-width="1.6"
+      stroke-linecap="round"
+      stroke-linejoin="round"
+    >
+      <g transform="translate(24,0) scale(-1,1)">
+        <path d="M12 3.6 A8.4 8.4 0 1 0 20.4 12" />
+        <path d="M12 3.6 L8.7 3.6 L10.2 6.3 Z" fill="currentColor" stroke="none" />
+      </g>
+      <text x="12" y="14.6" font-size="7" font-weight="700" fill="currentColor" stroke="none" text-anchor="middle">
+        {SKIP_FWD}
+      </text>
+    </svg>
+  )
+}
+{
+  name === 'mute' && (
+    <svg
+      class={cls}
+      viewBox="0 0 24 24"
+      aria-hidden="true"
+      fill="none"
+      stroke="currentColor"
+      stroke-width="1.7"
+      stroke-linecap="round"
+      stroke-linejoin="round"
+    >
+      <path d="M4 9.2 H7 L11 5.8 V18.2 L7 14.8 H4 Z" fill="currentColor" stroke="currentColor" />
+      <path class="vol-wave" d="M14.4 9.6 a3.6 3.6 0 0 1 0 4.8" />
+      <path class="vol-wave" d="M16.7 7.4 a6.8 6.8 0 0 1 0 9.2" />
+    </svg>
+  )
+}

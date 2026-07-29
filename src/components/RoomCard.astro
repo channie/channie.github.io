@@ -1,0 +1,134 @@
+---
+/* ============================================================
+   RoomCard — an "Explore" card: media (cover) + body (label,
+   description, arrow link). Whole card is the link. Featured
+   cards are larger and prefix the label with a ✦ (a11y: the
+   star is decorative). Hover = lift + image zoom.
+   ============================================================ */
+import { Image } from 'astro:assets';
+import ArrowLink from './ArrowLink.astro';
+import type { Room } from '../data/home';
+
+interface Props {
+  room: Room;
+}
+const { room }: Props = Astro.props;
+---
+
+<a class:list={['card', { big: room.featured }]} href={room.href}>
+  <div class="card-media" style={room.imgBg ? `background:${room.imgBg}` : undefined}>
+    <Image
+      src={room.img}
+      alt=""
+      widths={[320, 480, 720]}
+      sizes="(min-width: 600px) 45vw, 90vw"
+      class:list={['card-img', { contain: room.fit === 'contain' }]}
+    />
+  </div>
+  <div class="card-body">
+    <h3 class:list={['card-label', { featured: room.featured }]}>{room.label}</h3>
+    <p class="card-desc">{room.desc}</p>
+    <ArrowLink as="span">{room.cta}</ArrowLink>
+  </div>
+</a>
+
+<style>
+  .card {
+    background: var(--card);
+    border: 1px solid var(--line);
+    border-radius: var(--radius-card);
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    transition:
+      transform var(--dur-card) var(--ease),
+      box-shadow var(--dur-card) var(--ease);
+  }
+  .card:hover,
+  .card:focus-visible {
+    transform: translateY(-6px);
+    box-shadow: var(--shadow-card-hover);
+  }
+  .card:focus-visible {
+    border-radius: 9px;
+  }
+
+  .card-media {
+    width: 100%;
+    overflow: hidden;
+    background: var(--card);
+    height: 208px;
+  }
+
+  .card-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.5s var(--ease);
+  }
+  .card-img.contain {
+    object-fit: contain;
+  }
+  .card:hover .card-img {
+    transform: scale(1.045);
+  }
+  /* don't zoom a contained logo — it just shrinks oddly */
+  .card:hover .card-img.contain {
+    transform: none;
+  }
+
+  .card-body {
+    display: flex;
+    flex-direction: column;
+    gap: 11px;
+    padding: 24px 22px 26px;
+    flex: 1;
+  }
+  .card-label {
+    font-family: var(--font-sans);
+    text-transform: uppercase;
+    letter-spacing: var(--tracking-eyebrow);
+    font-weight: 700;
+    color: var(--accent);
+    font-size: var(--text-sm);
+  }
+  .card-label.featured::before {
+    content: '✦';
+    color: var(--accent2);
+    margin-right: 9px;
+    font-size: 0.9em;
+  }
+  .card-desc {
+    font-family: var(--font-sans);
+    color: var(--muted);
+    font-size: var(--text-md);
+    line-height: 1.58;
+    flex: 1;
+  }
+
+  @container page (min-width: 600px) {
+    .card.big .card-media {
+      height: 280px;
+    }
+    /* secondary cards a touch shorter */
+    .card:not(.big) .card-media {
+      height: 188px;
+    }
+  }
+
+  @container page (min-width: 1024px) {
+    .card.big .card-media {
+      height: 320px;
+    }
+    .card:not(.big) .card-media {
+      height: 168px;
+    }
+    .card-body {
+      padding: 26px 26px 28px;
+      gap: 12px;
+    }
+    .card.big .card-desc {
+      max-width: 90%;
+    }
+  }
+</style>

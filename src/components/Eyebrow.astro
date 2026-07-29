@@ -1,0 +1,27 @@
+---
+/* ============================================================
+   Eyebrow — small uppercase label.
+   Color defaults to --accent; on dark bands, set color via the
+   parent (e.g. a wrapper sets `color`/opacity for band context).
+   Renders as a <p> by default; pass `as="span"` to inline it.
+   ============================================================ */
+interface Props {
+  as?: 'p' | 'span' | 'div';
+  class?: string;
+}
+const { as: Tag = 'p', class: className }: Props = Astro.props;
+---
+
+<Tag class:list={['eyebrow', className]}><slot /></Tag>
+
+<style>
+  .eyebrow {
+    font-family: var(--font-sans);
+    text-transform: uppercase;
+    letter-spacing: var(--tracking-eyebrow);
+    font-weight: 600;
+    font-size: var(--text-xs);
+    line-height: 1.2;
+    color: var(--accent);
+  }
+</style>

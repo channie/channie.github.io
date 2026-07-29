@@ -1,0 +1,758 @@
+---
+/* ============================================================
+   ReadingFlip — the Reading "magazine flip" (the one Reading island).
+   Each book is a spread: focal cover + meta on the left, blurb +
+   entries (rubrics / quotes / a note) on the right. Prev/next arrows,
+   dots, wrap, keyboard arrows, and peeking neighbour covers on desktop.
+
+   The spread is a fixed-height "book": every spread is the same size, so
+   flipping feels like turning pages, not scrolling a growing page. When a
+   book has more entries than fit, the right page scrolls internally under
+   a soft fade (scrollEdge, in src/lib/readingFlip.ts).
+
+   Progressive enhancement: every spread is rendered server-side and
+   visible (a readable vertical stack) with NO JavaScript. The script sets
+   data-enhanced, which switches to the single fixed-height carousel and
+   wires the controls — so content works even if the island never hydrates.
+
+   Voice postcards: each quote's recording is resolved to an emitted URL +
+   real duration at BUILD (getBookAudio); the browser loads audio only on
+   play. A quote with narration/audioFile but no resolvable file shows an
+   inert "soon" pill.
+   ============================================================ */
+import type { CollectionEntry } from 'astro:content';
+import BookCover from './BookCover.astro';
+import VoicePostcard from './VoicePostcard.astro';
+import { splitSentences, splitParagraphs, splitEmphasis } from '../lib/readingFlip';
+import { getBookAudio } from '../lib/bookAudio';
+
+interface Props {
+  books: CollectionEntry<'books'>[];
+}
+const { books } = Astro.props;
+
+// Resolve every quote's voice-postcard audio (emitted URL + real duration)
+// at build — so the client shows durations for free and loads no audio bytes.
+const spreads = await Promise.all(
+  books.map(async (book) => ({
+    book,
+    entries: await Promise.all(
+      book.data.entries.map(async (entry) =>
+        entry.type === 'quote' && entry.audioFile
+          ? { entry, audio: await getBookAudio(book.id, entry.audioFile) }
+          : { entry, audio: null },
+      ),
+    ),
+  })),
+);
+
+// An `emphasis` names a phrase inside the quote it belongs to. If an edit to
+// `text` leaves it behind, the highlight would just silently stop appearing —
+// so fail the build instead, naming the book and the phrase.
+for (const { book } of spreads) {
+  for (const entry of book.data.entries) {
+    if (entry.type !== 'quote' || !entry.emphasis) continue;
+    if (!entry.text.includes(entry.emphasis)) {
+      throw new Error(
+        `Reading (${book.id}): emphasis “${entry.emphasis}” does not appear in that quote's text. ` +
+          `Emphasis must match the quote verbatim — update it to the phrase as written.`,
+      );
+    }
+  }
+}
+---
+
+<div class="readstage" data-flip>
+  <button type="button" class="flip-arrow" data-prev aria-label="Previous book">‹</button>
+
+  <div class="spread-deck">
+    <div class="spread peek prevpk" data-peek="prev" aria-hidden="true"></div>
+
+    {
+      spreads.map(({ book, entries }, i) => {
+        // Chinese (WenKai) has no true italic and needs no “ ” wrapping;
+        // `zh` switches the primary text to upright + sets the spread's lang.
+        const zh = book.data.lang === 'zh';
+        return (
+          <article
+            class:list={['spread', 'main', { zh }]}
+            data-spread
+            data-index={i}
+            lang={zh ? 'zh-Hant' : undefined}
+            aria-label={`${book.data.title} — ${book.data.author}`}
+          >
+            <div class="leaf cover">
+              <BookCover
+                title={book.data.title}
+                author={book.data.author}
+                color={book.data.color}
+                cover={book.data.cover}
+                coverAlt={book.data.coverAlt}
+                priority={i === 0}
+                big
+              />
+              <div class="cover-meta">
+                <h2 class="cover-title">{book.data.title}</h2>
+                <p class="cover-author">{book.data.author}</p>
+              </div>
+            </div>
+
+            <div class="leaf notes" data-notes>
+              {book.data.blurb && (
+                <div class="sp-blurb">
+                  <p class="sp-blurb-primary">{book.data.blurb}</p>
+                  {book.data.blurbEn && <p class="gloss">{book.data.blurbEn}</p>}
+                </div>
+              )}
+              <div class="entries">
+                {entries.map(({ entry, audio }) => {
+                  if (entry.type === 'rubric') {
+                    return (
+                      <div class="entry rubric">
+                        <span class="rub">{entry.text}</span>
+                      </div>
+                    );
+                  }
+                  if (entry.type === 'note') {
+                    return (
+                      <div class="entry note">
+                        <span class="elabel">Note</span>
+                        <p>{entry.text}</p>
+                        {entry.textEn && <p class="gloss">{entry.textEn}</p>}
+                      </div>
+                    );
+                  }
+                  // A quote keeps the paragraphs it was authored with, wherever
+                  // it sits in the spread — so a multi-paragraph excerpt no
+                  // longer has to be the closing one. The “ ” are added here
+                  // (opening on the first paragraph, closing on the last), and
+                  // an `emphasis` is struck within whichever paragraph holds it.
+                  const paras = splitParagraphs(entry.text);
+                  const qtext = (
+                    <div class="eq qtext">
+                      {paras.map((para, idx) => {
+                        const open = idx === 0 && !zh ? '“' : '';
+                        const close = idx === paras.length - 1 && !zh ? '”' : '';
+                        const flare = entry.emphasis
+                          ? splitEmphasis(para, entry.emphasis)
+                          : null;
+                        // NB: concatenate around <em> and keep it on one
+                        // line — adjacent JSX expressions on separate lines
+                        // render a stray space between them.
+                        return (
+                          <p>
+                            {flare ? (
+                              /* prettier-ignore */
+                              <Fragment>{open + flare[0]}<em class="flare">{flare[1]}</em>{flare[2] + close}</Fragment>
+                            ) : (
+                              open + para + close
+                            )}
+                          </p>
+                        );
+                      })}
+                    </div>
+                  );
+                  // the translation follows the same paragraphing as the quote
+                  const qgloss = entry.textEn && (
+                    <div class="gloss">
+                      {splitParagraphs(entry.textEn).map((para) => (
+                        <p>{para}</p>
+                      ))}
+                    </div>
+                  );
+
+                  // the spread's ending — a hairline above and a ✦ beneath
+                  // either way. A `coda` is a short beat, centred with each
+                  // sentence on its own line; a `passage` is a longer excerpt
+                  // left-aligned as ordinary prose.
+                  if (entry.closing) {
+                    const lines =
+                      entry.closing === 'coda' ? splitSentences(entry.text) : null;
+                    return (
+                      <div class:list={['entry', 'closing', entry.closing]}>
+                        {lines ? (
+                          <p class="eq coda-lines">
+                            {lines.map((line, idx) => {
+                              const t = zh
+                                ? line
+                                : (idx === 0 ? '“' : '') +
+                                  line +
+                                  (idx === lines.length - 1 ? '”' : '');
+                              return <span class="coda-line">{t}</span>;
+                            })}
+                          </p>
+                        ) : (
+                          qtext
+                        )}
+                        {qgloss}
+                        <span class="end-mark" aria-hidden="true">✦</span>
+                      </div>
+                    );
+                  }
+                  // quote
+                  const hasPostcard = Boolean(entry.narration || entry.audioFile);
+                  return (
+                    <div class="entry q">
+                      {qtext}
+                      {qgloss}
+                      {hasPostcard && <VoicePostcard src={audio?.url} duration={audio?.duration} />}
+                      {entry.thought && <p class="ethought">{entry.thought}</p>}
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+          </article>
+        );
+      })
+    }
+
+    <div class="spread peek nextpk" data-peek="next" aria-hidden="true"></div>
+  </div>
+
+  <button type="button" class="flip-arrow" data-next aria-label="Next book">›</button>
+
+  <div class="flip-dots">
+    {
+      spreads.map(({ book }, i) => (
+        <button type="button" class="dot" data-dot={i} aria-label={book.data.title} />
+      ))
+    }
+  </div>
+</div>
+
+<style>
+  .readstage {
+    position: relative;
+    /* wider than the text column (--content-max) so the "book" has room to
+       breathe; centres itself since it sits outside .col. */
+    max-width: 1180px;
+    margin-inline: auto;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--space-1);
+    padding: 16px var(--gutter) 54px;
+  }
+
+  /* ---- controls (enhanced only) ---- */
+  .flip-arrow,
+  .flip-dots,
+  .spread.peek {
+    display: none;
+  }
+  .flip-arrow {
+    flex: none;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    border: 1px solid var(--line);
+    background: var(--card);
+    color: var(--accent);
+    font-size: var(--text-lg);
+    line-height: 1;
+    cursor: pointer;
+    align-items: center;
+    justify-content: center;
+    z-index: 5;
+    transition:
+      background 0.2s var(--ease),
+      color 0.2s var(--ease);
+  }
+  .flip-arrow:hover {
+    background: var(--accent);
+    color: #fff;
+  }
+  [data-enhanced] .flip-arrow {
+    display: flex;
+  }
+  .flip-dots {
+    position: absolute;
+    bottom: 26px;
+    left: 50%;
+    transform: translateX(-50%);
+    gap: var(--space-2);
+  }
+  [data-enhanced] .flip-dots {
+    display: flex;
+  }
+  .dot {
+    position: relative;
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: var(--line);
+    border: none;
+    padding: 0;
+    cursor: pointer;
+    transition: background 0.2s var(--ease);
+  }
+  /* Transparent overlay enlarges the tap target to ~24px (WCAG 2.5.8)
+     without changing the 7px visual dot or the row's spacing. */
+  .dot::after {
+    content: '';
+    position: absolute;
+    inset: -9px;
+  }
+  .dot.on {
+    background: var(--accent);
+  }
+
+  .spread-deck {
+    position: relative;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 26px;
+    min-height: 420px;
+  }
+
+  /* ---- the spread card ---- */
+  .spread.main {
+    position: relative;
+    z-index: 3;
+    width: 100%;
+    background: var(--card);
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    box-shadow: 0 30px 70px -34px rgba(0, 0, 0, 0.5);
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 22px;
+    padding: 24px;
+  }
+  /* enhanced: one active fixed-height spread; the notes page scrolls inside */
+  [data-enhanced] .spread-deck {
+    flex-direction: row;
+    justify-content: center;
+    gap: 0;
+  }
+  [data-enhanced] .spread.main {
+    grid-template-rows: auto minmax(0, 1fr);
+    height: clamp(520px, 82vh, 700px);
+  }
+  [data-enhanced] .spread.main[hidden] {
+    display: none;
+  }
+
+  .leaf.cover {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--space-4);
+  }
+  .leaf.cover :global(.bcover) {
+    max-width: 170px;
+  }
+  .cover-meta {
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+  }
+  .cover-title {
+    font-family: var(--font-display);
+    font-style: italic;
+    font-weight: 500;
+    line-height: 1.2;
+    font-size: var(--text-lg);
+    color: var(--ink);
+  }
+  .cover-author {
+    font-family: var(--font-sans);
+    text-transform: uppercase;
+    letter-spacing: var(--tracking-eyebrow);
+    font-size: var(--text-2xs);
+    font-weight: 700;
+    color: var(--accent);
+  }
+
+  .leaf.notes {
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+    min-width: 0;
+  }
+  /* the notes page scrolls internally only in the enhanced fixed-height card */
+  [data-enhanced] .leaf.notes {
+    overflow-y: auto;
+    min-height: 0;
+    /* clear the thin scrollbar so pills/text never kiss it */
+    padding-right: var(--space-4);
+    scrollbar-width: thin;
+    scrollbar-color: var(--line) transparent;
+  }
+  /* soft fade at whichever edge has more content (edge set by the island) */
+  [data-enhanced] .leaf.notes.scrollable[data-edge='bottom'] {
+    -webkit-mask-image: linear-gradient(to bottom, #000 84%, transparent);
+    mask-image: linear-gradient(to bottom, #000 84%, transparent);
+  }
+  [data-enhanced] .leaf.notes.scrollable[data-edge='top'] {
+    -webkit-mask-image: linear-gradient(to top, #000 84%, transparent);
+    mask-image: linear-gradient(to top, #000 84%, transparent);
+  }
+  [data-enhanced] .leaf.notes.scrollable[data-edge='both'] {
+    -webkit-mask-image: linear-gradient(to bottom, transparent, #000 12%, #000 88%, transparent);
+    mask-image: linear-gradient(to bottom, transparent, #000 12%, #000 88%, transparent);
+  }
+  .sp-blurb {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+  }
+  .sp-blurb-primary {
+    font-family: var(--font-display);
+    font-style: italic;
+    color: var(--muted);
+    line-height: 1.4;
+    font-size: var(--text-base);
+  }
+  /* An English translation shown quietly under the primary line (a non-English
+     book's blurb / quote / coda / note). Smaller, lighter, italic display, so
+     it reads as a gloss and recedes below the primary text. */
+  .gloss {
+    font-family: var(--font-display);
+    font-style: italic;
+    font-size: var(--text-base);
+    line-height: 1.55;
+    /* deliberately lighter than --muted so the translation recedes */
+    color: color-mix(in srgb, var(--ink) 50%, transparent);
+  }
+
+  /* ---- framed entries (left accent bar; no top rules) ---- */
+  .entries {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-5);
+  }
+  .entry {
+    display: flex;
+    flex-direction: column;
+    gap: 13px;
+  }
+  .entry.q {
+    border-left: 2px solid var(--accent-hairline);
+    padding-left: 18px;
+  }
+  .entry .eq {
+    font-family: var(--font-display);
+    font-style: italic;
+    color: var(--ink);
+    line-height: 1.32;
+    font-size: var(--text-xl);
+  }
+  .entry .ethought {
+    font-family: var(--font-sans);
+    color: var(--muted);
+    font-size: var(--text-md);
+    line-height: 1.6;
+  }
+  /* the spread's ENDING — set apart by a hairline above (like the note) and
+     sealed with a ✦. Shared by both shapes; `coda` and `passage` differ only
+     in how the text itself is set. */
+  .entry.closing {
+    gap: var(--space-4);
+    margin-top: var(--space-3);
+    padding-top: var(--space-6);
+    border-top: 1px solid var(--line);
+  }
+  /* coda — a short beat: centred, one sentence per line, same size as the
+     other quotes (.eq), just looser. */
+  .entry.closing.coda {
+    align-items: center;
+    text-align: center;
+  }
+  .entry.closing.coda .coda-lines {
+    line-height: 1.5;
+  }
+  .coda-line {
+    display: block;
+  }
+  /* passage — a longer excerpt: ordinary left-aligned prose, one step down
+     from the quote size with prose leading so a long block stays readable. */
+  .entry.closing.passage .eq {
+    font-size: var(--text-lg);
+    line-height: 1.62;
+  }
+  /* a quote (and its translation) keeps the paragraphs it was written with.
+     The gap rides on the font size, so it stays proportional as the type
+     scales. */
+  .qtext p + p,
+  .gloss p + p {
+    margin-top: 0.85em;
+  }
+  /* the line the excerpt turns on — struck in accent, a touch larger than the
+     prose around it, over a low rajah wash. Sized in `em` so it tracks
+     whatever the surrounding quote is set at. */
+  .flare {
+    color: var(--accent);
+    font-style: italic;
+    font-size: 1.18em;
+    line-height: 1.2;
+    background: linear-gradient(
+      to top,
+      color-mix(in srgb, var(--accent2) 24%, transparent) 0.26em,
+      transparent 0.26em
+    );
+  }
+  /* the ✦ stays centred even when the text above it is left-aligned */
+  .end-mark {
+    align-self: center;
+    font-family: var(--font-display);
+    font-size: var(--text-lg);
+    line-height: 1;
+    color: var(--accent);
+    opacity: 0.7;
+  }
+  /* the Note is the closing reflection: no accent frame — set apart by a full
+     hairline above it and a little extra air, so it reads as an endnote. */
+  .entry.note {
+    margin-top: var(--space-3);
+    padding-top: var(--space-5);
+    border-top: 1px solid var(--line);
+    gap: var(--space-3);
+  }
+  .entry.note .elabel {
+    font-family: var(--font-sans);
+    text-transform: uppercase;
+    letter-spacing: var(--tracking-eyebrow-tight);
+    font-size: var(--text-2xs);
+    font-weight: 700;
+    color: var(--accent2);
+  }
+  .entry.note p {
+    font-family: var(--font-sans);
+    color: var(--ink);
+    line-height: 1.62;
+    font-size: var(--text-md);
+  }
+  /* the note keeps its sans voice, but its translation still recedes — the
+     rule above is more specific than .gloss, so restate the colour here */
+  .entry.note .gloss {
+    color: color-mix(in srgb, var(--ink) 50%, transparent);
+  }
+  /* rubric: a quiet in-spread section header (flush, no accent bar), with a
+     hairline trailing off to the right like a book's part divider. */
+  .entry.rubric {
+    flex-direction: row;
+    align-items: center;
+    gap: var(--space-3);
+    margin-top: var(--space-1);
+  }
+  .entry.rubric:first-child {
+    margin-top: 0;
+  }
+  .rub {
+    font-family: var(--font-sans);
+    text-transform: uppercase;
+    letter-spacing: var(--tracking-eyebrow);
+    font-size: var(--text-2xs);
+    font-weight: 700;
+    color: var(--accent);
+    white-space: nowrap;
+  }
+  .entry.rubric::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: var(--line);
+  }
+
+  /* ---- Chinese-primary spread: WenKai has no true italic, so set the
+     primary text upright and give CJK more leading (these come after the
+     base rules so they win on equal specificity). ---- */
+  .spread.zh .cover-title,
+  .spread.zh .sp-blurb-primary,
+  .spread.zh .eq {
+    font-style: normal;
+  }
+  .spread.zh .eq {
+    line-height: 1.78;
+  }
+  /* CJK sets denser than Latin at the same size, so a zh quote reads a step
+     larger than it measures — take it down one token (still above the note). */
+  .spread.zh .entry.q .eq {
+    font-size: var(--text-lg);
+  }
+  .spread.zh .sp-blurb-primary {
+    line-height: 1.7;
+  }
+  .spread.zh .entry.note p {
+    line-height: 1.85;
+  }
+  .spread.zh .flare {
+    font-style: normal;
+  }
+
+  /* ---- peeking neighbour spreads (desktop, enhanced) ---- */
+  .spread.peek {
+    position: absolute;
+    top: 50%;
+    width: 78%;
+    z-index: 1;
+    opacity: 0.45;
+    pointer-events: none;
+    filter: saturate(0.9);
+    padding: 30px;
+  }
+  .spread.peek :global(.bcover) {
+    max-width: 150px;
+    margin: 0 auto;
+  }
+  .spread.peek::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: var(--card);
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    z-index: -1;
+    box-shadow: 0 20px 50px -30px rgba(0, 0, 0, 0.5);
+  }
+  .spread.peek.prevpk {
+    left: 0;
+    transform: translate(-30%, -50%) scale(0.82);
+  }
+  .spread.peek.nextpk {
+    right: 0;
+    transform: translate(30%, -50%) scale(0.82);
+  }
+
+  @container page (min-width: 768px) {
+    .readstage {
+      gap: 26px;
+      padding: 30px 24px 70px;
+    }
+    .flip-arrow {
+      width: 52px;
+      height: 52px;
+    }
+    .spread-deck {
+      min-height: 470px;
+    }
+    [data-enhanced] .spread-deck {
+      max-width: 1000px;
+    }
+    .spread.main {
+      grid-template-columns: 0.82fr 1fr;
+      gap: 48px;
+      padding: 48px 52px;
+    }
+    [data-enhanced] .spread.main {
+      grid-template-rows: none;
+      height: clamp(560px, 76vh, 700px);
+      align-items: stretch;
+    }
+    /* center spine line */
+    [data-enhanced] .spread.main::after {
+      content: '';
+      position: absolute;
+      top: 36px;
+      bottom: 36px;
+      left: 45.5%;
+      width: 1px;
+      background: var(--line);
+    }
+    .leaf.cover {
+      justify-content: flex-start;
+    }
+    .leaf.cover :global(.bcover) {
+      max-width: 260px;
+    }
+    [data-enhanced] .spread.peek {
+      display: block;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .flip-arrow,
+    .dot {
+      transition: none;
+    }
+  }
+</style>
+
+<script>
+  import { initVoicePostcards } from '../lib/voicePostcard';
+  import { scrollEdge } from '../lib/readingFlip';
+
+  document.querySelectorAll<HTMLElement>('[data-flip]').forEach((stage) => {
+    const spreads = [...stage.querySelectorAll<HTMLElement>('[data-spread]')];
+    const dots = [...stage.querySelectorAll<HTMLButtonElement>('[data-dot]')];
+    const peekPrev = stage.querySelector<HTMLElement>('[data-peek="prev"]');
+    const peekNext = stage.querySelector<HTMLElement>('[data-peek="next"]');
+    const n = spreads.length;
+    if (n < 1) return;
+
+    let i = 0;
+    const coverOf = (idx: number) => spreads[idx].querySelector('.bcover');
+    const notesOf = (idx: number) => spreads[idx].querySelector<HTMLElement>('[data-notes]');
+
+    // Fade whichever edge of the active notes page still has content.
+    const updateFade = (notes: HTMLElement | null) => {
+      if (!notes) return;
+      const edge = scrollEdge(notes.scrollTop, notes.clientHeight, notes.scrollHeight);
+      notes.classList.toggle('scrollable', edge !== 'none');
+      notes.dataset.edge = edge;
+    };
+
+    const render = () => {
+      spreads.forEach((s, k) => {
+        s.hidden = k !== i;
+      });
+      dots.forEach((d, k) => {
+        const on = k === i;
+        d.classList.toggle('on', on);
+        if (on) d.setAttribute('aria-current', 'true');
+        else d.removeAttribute('aria-current');
+      });
+      // populate the decorative peek slots with the neighbour covers
+      const peers: [HTMLElement | null, number][] = [
+        [peekPrev, (i - 1 + n) % n],
+        [peekNext, (i + 1) % n],
+      ];
+      for (const [slot, idx] of peers) {
+        if (!slot) continue;
+        const cover = coverOf(idx);
+        if (!cover) continue;
+        const clone = cover.cloneNode(true) as HTMLElement;
+        clone.classList.remove('big');
+        slot.replaceChildren(clone);
+      }
+      // the active spread just became visible — reset + measure its scroll
+      const active = notesOf(i);
+      active?.scrollTo({ top: 0 });
+      requestAnimationFrame(() => updateFade(active));
+    };
+
+    const go = (d: number) => {
+      i = (i + d + n) % n;
+      render();
+    };
+
+    stage.querySelector('[data-prev]')?.addEventListener('click', () => go(-1));
+    stage.querySelector('[data-next]')?.addEventListener('click', () => go(1));
+    dots.forEach((d, k) =>
+      d.addEventListener('click', () => {
+        i = k;
+        render();
+      }),
+    );
+    stage.addEventListener('keydown', (e) => {
+      if (e.key === 'ArrowLeft') go(-1);
+      else if (e.key === 'ArrowRight') go(1);
+    });
+
+    // keep the fade in sync while scrolling the notes / on resize
+    spreads.forEach((s) => {
+      const notes = s.querySelector<HTMLElement>('[data-notes]');
+      notes?.addEventListener('scroll', () => updateFade(notes), { passive: true });
+    });
+    window.addEventListener('resize', () => updateFade(notesOf(i)));
+
+    initVoicePostcards(stage);
+    stage.dataset.enhanced = 'true';
+    render();
+  });
+</script>

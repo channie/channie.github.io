@@ -1,0 +1,73 @@
+---
+/* ============================================================
+   PageHead — the inner-page heading block: eyebrow + italic <h1>
+   + intro paragraph. This is the single <h1> for inner pages.
+   Type scales by container tier.
+   `centered` puts the whole block on a center axis (the Podcast
+   page's "everything on one axis" layout).
+   ============================================================ */
+import Eyebrow from './Eyebrow.astro';
+
+interface Props {
+  eyebrow: string;
+  title: string;
+  intro?: string;
+  /** BCP-47 lang for the intro line when it isn't English (e.g. "zh-Hant"). */
+  introLang?: string;
+  /** center the block instead of the default left alignment */
+  centered?: boolean;
+}
+const { eyebrow, title, intro, introLang, centered = false } = Astro.props;
+---
+
+<header class:list={['page-head', { centered }]}>
+  <Eyebrow>{eyebrow}</Eyebrow>
+  <h1>{title}</h1>
+  {intro && <p class="intro" lang={introLang}>{intro}</p>}
+</header>
+
+<style>
+  .page-head {
+    padding: 40px var(--gutter) 20px;
+    max-width: var(--content-max);
+  }
+  .page-head h1 {
+    font-family: var(--font-display);
+    font-style: italic;
+    font-weight: 400;
+    color: var(--ink);
+    letter-spacing: -0.015em;
+    line-height: 1.04;
+    margin-top: var(--space-4);
+    font-size: var(--text-4xl);
+  }
+  .intro {
+    font-family: var(--font-sans);
+    color: var(--muted);
+    margin-top: 18px;
+    line-height: 1.6;
+    font-size: var(--text-base);
+    max-width: 560px;
+  }
+
+  /* centered variant — one shared center axis (intro a touch wider) */
+  .page-head.centered {
+    text-align: center;
+    margin-inline: auto;
+  }
+  .page-head.centered .intro {
+    max-width: 620px;
+    margin-inline: auto;
+  }
+
+  @container page (min-width: 600px) {
+    .page-head {
+      padding: 56px var(--gutter) 24px;
+    }
+  }
+  @container page (min-width: 1024px) {
+    .page-head {
+      padding: 64px var(--gutter) 28px;
+    }
+  }
+</style>

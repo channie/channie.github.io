@@ -1,0 +1,38 @@
+---
+/* ============================================================
+   YouTube — a lazy, privacy-friendly video embed for MDX posts:
+     <YouTube id="dQw4w9WgXcQ" title="…" />
+   The `id` is the part after watch?v= (or youtu.be/<id>).
+   ============================================================ */
+interface Props {
+  id: string;
+  title?: string;
+}
+const { id, title = 'YouTube video' }: Props = Astro.props;
+---
+
+<div class="yt">
+  <iframe
+    src={`https://www.youtube-nocookie.com/embed/${id}`}
+    title={title}
+    loading="lazy"
+    allow="accelerometer; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+    allowfullscreen
+  ></iframe>
+</div>
+
+<style>
+  .yt {
+    aspect-ratio: 16 / 9;
+    margin: 1.9em 0;
+    border-radius: var(--radius-media);
+    overflow: hidden;
+    background: var(--card);
+  }
+  .yt iframe {
+    width: 100%;
+    height: 100%;
+    border: 0;
+    display: block;
+  }
+</style>

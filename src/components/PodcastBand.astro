@@ -1,0 +1,453 @@
+---
+/* ============================================================
+   PodcastBand — the homepage "latest episode" teaser: a deep
+   terracotta band holding a darker inset card with the episode
+   cover art + full transport, a centered eyebrow above it, and a
+   centered "Listen on" chip row below. Wired to real audio via
+   the shared initPlayers().
+   ============================================================ */
+import { Image } from 'astro:assets';
+import PlayerIcon from './PlayerIcon.astro';
+import { podcastBand as p } from '../data/podcast';
+import { platformGlyph } from '../data/platformGlyphs';
+import { getPodcast } from '../lib/podcast';
+import { podcastImage } from '../lib/podcastImages';
+import { SKIP_BACK, SKIP_FWD } from '../lib/player';
+
+// Prefer the live RSS snapshot's latest episode; fall back to the static
+// band data if the feed has no episodes yet.
+const { show, latest } = getPodcast();
+const title = latest?.title ?? p.title;
+const length = latest?.duration ?? p.length;
+// Episode-specific artwork (changes with every episode, signalling "new
+// content"); podcastImage falls back to the show logo when the episode
+// has no mirrored art, and p.cover covers the empty-feed case.
+const cover = latest ? podcastImage(latest.imageFile) : p.cover;
+---
+
+<section class="podband">
+  <div class="podwrap">
+    <p class="eyebrow on-band pod-eyebrow">{p.eyebrow}</p>
+
+    <div class="podpanel">
+      <div class="podcover">
+        <Image
+          src={cover}
+          alt=""
+          widths={[132, 168, 264, 336]}
+          sizes="(min-width: 600px) 168px, 132px"
+          class="podcover-img"
+        />
+      </div>
+      <div class="podinfo">
+        <p class="pod-kicker">
+          {
+            latest ? (
+              <>
+                <time datetime={latest.date || undefined}>{latest.dateLabel}</time> · {show.title}
+              </>
+            ) : (
+              p.meta
+            )
+          }
+        </p>
+        <h2 class="ptitle">{title}</h2>
+
+        <div class="player" data-player>
+          {latest && <audio data-audio preload="none" src={latest.audioUrl}></audio>}
+          <div class="player-row">
+            <a class="playbtn" data-play href="/podcast/" aria-label={`Play latest episode — ${title}`}>
+              <PlayerIcon name="play" class="i-play" />
+              <PlayerIcon name="pause" class="i-pause" />
+            </a>
+            <button
+              type="button"
+              class="pbar"
+              data-scrub
+              aria-label="Seek"
+              role="slider"
+              aria-valuemin="0"
+              aria-valuemax="100"
+              aria-valuenow="0"
+            >
+              <i data-progress></i>
+            </button>
+            <span class="ptime"><span data-cur>0:00</span> / <span data-dur>{length}</span></span>
+          </div>
+
+          <div class="player-ctls">
+            <button type="button" class="bandic" data-back aria-label={`Back ${SKIP_BACK} seconds`}>
+              <PlayerIcon name="back" />
+            </button>
+            <button type="button" class="bandic" data-fwd aria-label={`Forward ${SKIP_FWD} seconds`}>
+              <PlayerIcon name="fwd" />
+            </button>
+            <button type="button" class="bandspeed" data-speed aria-label="Playback speed">1×</button>
+            <button type="button" class="bandic" data-mute aria-label="Mute">
+              <PlayerIcon name="mute" />
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="listenon">
+      <p class="eyebrow on-band">Listen on</p>
+      <div class="chips">
+        {
+          /* External platforms open in a new tab; internal links (the
+             "More platforms" share page) navigate in place. */
+          p.platforms.map((pl) => (
+            <a
+              class="chip"
+              href={pl.url}
+              {...(pl.url.startsWith('/') ? {} : { target: '_blank', rel: 'noopener noreferrer' })}
+            >
+              <span class="pglyph" aria-hidden="true" set:html={platformGlyph(pl.slug)} />
+              {pl.name}
+            </a>
+          ))
+        }
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  /* Deepen the terracotta locally (the global --band token is unchanged)
+     and sit the inset panel one step darker again. */
+  .podband {
+    --band-deep: #9b300d;
+    --panel: #872709;
+    background: var(--band-deep);
+    color: var(--band-ink);
+    padding: 40px var(--gutter);
+    margin-top: 26px;
+  }
+  .podwrap {
+    /* band background stays full-bleed; its content matches the page column */
+    max-width: var(--content-max);
+    margin-inline: auto;
+  }
+
+  .eyebrow.on-band {
+    color: var(--band-ink);
+    opacity: 0.82;
+    font-family: var(--font-sans);
+    text-transform: uppercase;
+    letter-spacing: var(--tracking-eyebrow);
+    font-weight: 600;
+    font-size: var(--text-xs);
+  }
+  .eyebrow.pod-eyebrow {
+    display: block;
+    text-align: center;
+    opacity: 0.78;
+    margin-bottom: var(--space-5);
+  }
+
+  /* ---- inset panel: a deep drop shadow lifting the card off the band
+     plus a 1px inner top highlight ---- */
+  .podpanel {
+    background: var(--panel);
+    border: 1px solid rgba(247, 228, 204, 0.12);
+    border-radius: var(--radius-player);
+    padding: var(--space-6);
+    display: flex;
+    flex-direction: column;
+    gap: 22px;
+    box-shadow:
+      0 30px 70px -36px rgba(20, 8, 2, 0.8),
+      inset 0 1px 0 rgba(255, 255, 255, 0.05);
+  }
+
+  .podcover {
+    border-radius: 12px;
+    overflow: hidden;
+    flex: none;
+    width: 132px;
+    height: 132px;
+    box-shadow: var(--shadow-cover);
+  }
+  .podcover-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover; /* episode art fills the square edge-to-edge */
+  }
+
+  .podinfo {
+    flex: 1;
+    min-width: 0;
+  }
+  .pod-kicker {
+    font-family: var(--font-sans);
+    text-transform: uppercase;
+    letter-spacing: var(--tracking-eyebrow);
+    font-weight: 600;
+    font-size: var(--text-2xs);
+    color: var(--band-muted);
+  }
+  .ptitle {
+    font-family: var(--font-display);
+    font-weight: 500;
+    color: var(--band-ink);
+    letter-spacing: -0.005em;
+    margin-top: 9px;
+    line-height: 1.1;
+    font-size: var(--text-2xl);
+    /* cap an unusually long episode title at three lines so it can't blow
+       out the panel (matches the player's row-title clamp pattern) */
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 3;
+    line-clamp: 3;
+    overflow: hidden;
+  }
+
+  /* ---- player ---- */
+  .player {
+    margin-top: var(--space-5);
+  }
+  .player-row {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+  }
+  .playbtn {
+    width: 54px;
+    height: 54px;
+    border-radius: 50%;
+    background: var(--band-ink);
+    color: var(--panel);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex: none;
+    cursor: pointer;
+    transition: transform var(--dur-btn) var(--ease);
+  }
+  .playbtn:hover {
+    transform: scale(1.06);
+  }
+  /* the transport glyphs come from <PlayerIcon> (a child component), so
+     their elements need :global() to be reached from this scoped sheet */
+  .playbtn :global(svg) {
+    width: 20px;
+    height: 20px;
+  }
+  .playbtn :global(.i-play) {
+    margin-left: 3px;
+  }
+  .playbtn :global(.i-pause) {
+    display: none;
+  }
+  [data-playing='true'] .playbtn :global(.i-play) {
+    display: none;
+  }
+  [data-playing='true'] .playbtn :global(.i-pause) {
+    display: inline;
+    margin-left: 0;
+  }
+
+  .pbar {
+    flex: 1;
+    height: 4px;
+    border-radius: 4px;
+    background: color-mix(in srgb, var(--band-ink) 26%, transparent);
+    position: relative;
+    border: none;
+    padding: 0;
+    cursor: pointer;
+    touch-action: none;
+  }
+  .pbar i {
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: 0%;
+    border-radius: 4px;
+    background: var(--accent2); /* orange fill pops on the dark panel */
+  }
+  .pbar i::after {
+    content: '';
+    position: absolute;
+    right: -5px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 11px;
+    height: 11px;
+    border-radius: 50%;
+    background: var(--accent2);
+  }
+  .pbar:focus-visible {
+    outline: 2px solid var(--band-ink);
+    outline-offset: 4px;
+  }
+  .ptime {
+    font-family: var(--font-sans);
+    color: var(--band-ink);
+    opacity: 0.88;
+    font-size: var(--text-sm);
+    font-variant-numeric: tabular-nums;
+    flex: none;
+    white-space: nowrap;
+  }
+
+  /* secondary controls — mute sits at the panel's far edge */
+  .player-ctls {
+    align-items: center;
+    gap: var(--space-1);
+    margin-top: 14px;
+  }
+  .bandic {
+    width: 38px;
+    height: 38px;
+    border-radius: 50%;
+    border: none;
+    background: none;
+    color: var(--band-ink);
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+    flex: none;
+    transition: background var(--dur-btn) var(--ease);
+  }
+  .bandic :global(svg) {
+    width: 22px;
+    height: 22px;
+  }
+  .bandic:hover {
+    background: color-mix(in srgb, var(--band-ink) 14%, transparent);
+  }
+  .bandic[data-mute] {
+    margin-left: auto;
+  }
+  [data-muted='true'] .bandic[data-mute] :global(.vol-wave) {
+    display: none;
+  }
+  [data-muted='true'] .bandic[data-mute] {
+    opacity: 0.6;
+  }
+  .bandspeed {
+    border: 1px solid color-mix(in srgb, var(--band-ink) 34%, transparent);
+    background: none;
+    color: var(--band-ink);
+    cursor: pointer;
+    font-family: var(--font-sans);
+    font-weight: 600;
+    font-size: var(--text-sm);
+    border-radius: 8px;
+    padding: 5px 9px;
+    min-width: 40px;
+    flex: none;
+    margin-left: 2px;
+    transition: background var(--dur-btn) var(--ease);
+  }
+  .bandspeed:hover {
+    background: color-mix(in srgb, var(--band-ink) 14%, transparent);
+  }
+
+  /* progressive enhancement: the scrubber, time and secondary controls need
+     JS; without it only the Play link shows (→ /podcast). */
+  .pbar,
+  .ptime,
+  .player-ctls {
+    display: none;
+  }
+  [data-enhanced] .pbar {
+    display: block;
+  }
+  [data-enhanced] .ptime {
+    display: inline;
+  }
+  [data-enhanced] .player-ctls {
+    display: flex;
+  }
+
+  /* ---- "Listen on" — outside the panel, centered ---- */
+  .listenon {
+    margin-top: var(--space-6);
+  }
+  .listenon .eyebrow.on-band {
+    display: block;
+    text-align: center;
+    opacity: 0.6;
+  }
+  .chips {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 10px;
+    margin-top: 14px;
+  }
+  .chip {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-2);
+    border: 1px solid color-mix(in srgb, var(--band-ink) 34%, transparent);
+    border-radius: var(--radius-pill);
+    padding: 8px 15px 8px 12px;
+    font-family: var(--font-sans);
+    font-size: var(--text-sm);
+    color: var(--band-ink);
+    white-space: nowrap;
+    transition: background var(--dur-btn) var(--ease);
+  }
+  .chip:hover {
+    background: color-mix(in srgb, var(--band-ink) 12%, transparent);
+  }
+  .pglyph {
+    width: 16px;
+    height: 16px;
+    color: var(--accent2);
+    display: inline-flex;
+    flex: none;
+  }
+  .pglyph :global(svg) {
+    width: 100%;
+    height: 100%;
+  }
+
+  @container page (min-width: 600px) {
+    .podband {
+      padding: 56px var(--gutter);
+    }
+    .podpanel {
+      flex-direction: row;
+      align-items: center;
+      gap: 30px;
+      padding: 30px 34px;
+    }
+    .podcover {
+      width: 168px;
+      height: 168px;
+    }
+  }
+
+  @container page (min-width: 1024px) {
+    .podband {
+      padding: 70px var(--gutter);
+      margin-top: 34px;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .playbtn,
+    .bandic,
+    .bandspeed,
+    .chip {
+      transition: none;
+    }
+    .playbtn:hover {
+      transform: none;
+    }
+  }
+</style>
+
+<script>
+  import { initPlayers } from '../lib/player';
+  initPlayers();
+</script>

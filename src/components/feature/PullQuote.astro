@@ -1,0 +1,46 @@
+---
+/* ============================================================
+   PullQuote — a line lifted out of the body copy.
+
+     <PullQuote>Falling is just never fun.</PullQuote>
+
+   A centred statement block in the reading measure, banded by a heavy
+   rule above and a hairline below.
+
+   It deliberately does NOT hang in the margin. A true margin pull
+   quote has to sit BESIDE a paragraph, and in this grid each block is
+   its own row — so a hanging quote ends up alone on a line with a void
+   next to it, which reads as a bug rather than as typography. Centred
+   in the measure is unambiguous and looks intentional at every width.
+
+   Pull quotes REPEAT text that already appears in the body — they are
+   decorative emphasis, so the element is aria-hidden to stop screen
+   readers reading the sentence twice.
+   ============================================================ */
+---
+
+<div class="pull" aria-hidden="true">
+  <p><slot /></p>
+</div>
+
+<style>
+  .pull {
+    margin: var(--space-12) 0;
+    text-align: center;
+  }
+  .pull p {
+    font-family: var(--font-display);
+    font-style: italic;
+    font-size: var(--text-2xl);
+    line-height: 1.28;
+    letter-spacing: -0.01em;
+    color: var(--ink);
+    /* a touch narrower than the measure so it reads as a lifted line,
+       not as another paragraph */
+    max-width: 32ch;
+    margin: 0 auto;
+    padding: var(--space-6) 0;
+    border-top: 2px solid var(--ink);
+    border-bottom: 1px solid var(--line);
+  }
+</style>

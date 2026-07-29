@@ -1,0 +1,47 @@
+---
+/* ============================================================
+   Breakout — the feature layout's width primitive.
+
+   FeatureArticle lays its prose out on a named grid with three
+   tracks: `measure` (the reading column), `wide` (measure plus the
+   margins) and `full` (edge to edge). Everything in the flow lands
+   in `measure` by default; a Breakout opts a block into a wider one.
+
+     <Breakout width="wide">…</Breakout>
+
+   Every other feature component is built on this, so the widths can
+   only ever come from one place. Use it directly in MDX to group
+   arbitrary content (e.g. a pair of videos) into a single wide block.
+   ============================================================ */
+interface Props {
+  /** which grid track to occupy (default: the reading measure) */
+  width?: 'measure' | 'wide' | 'full';
+  /** lay the children out as a side-by-side pair (stacks on phones) —
+      for diptychs like a before/after video comparison */
+  pair?: boolean;
+  /** extra class(es) to put on the wrapper */
+  class?: string;
+}
+const { width = 'measure', pair = false, class: cls = '' }: Props = Astro.props;
+const widthClass = width === 'measure' ? '' : `u-${width}`;
+---
+
+<div class:list={['breakout', widthClass, { pair }, cls]}>
+  <slot />
+</div>
+
+<style>
+  .breakout {
+    /* geometry comes entirely from the grid track it lands in */
+    margin: var(--space-16) 0;
+  }
+  .breakout.pair {
+    display: grid;
+    gap: var(--space-4);
+  }
+  @container page (min-width: 600px) {
+    .breakout.pair {
+      grid-template-columns: 1fr 1fr;
+    }
+  }
+</style>

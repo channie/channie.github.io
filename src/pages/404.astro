@@ -1,0 +1,46 @@
+---
+/* ============================================================
+   404 — the not-found page. GitHub Pages serves the built
+   404.html for any unknown URL, so a dead link lands here
+   instead of the platform default. Quiet copy in the site
+   voice + a way into each of the five surfaces.
+   ============================================================ */
+import BaseLayout from '../layouts/BaseLayout.astro';
+import PageHead from '../components/PageHead.astro';
+import ArrowLink from '../components/ArrowLink.astro';
+import { site } from '../data/site';
+---
+
+<BaseLayout title="Page not found">
+  <div class="col">
+    <PageHead
+      eyebrow="404"
+      title="This page wandered off."
+      intro="The link may be old, or the address mistyped — nothing lives at this URL. Everything that does live here is in one of these rooms."
+    />
+
+    <nav class="lost-rooms" aria-label="Site sections">
+      <ul>
+        {
+          site.nav.map((item) => (
+            <li>
+              <ArrowLink href={item.href}>{item.label}</ArrowLink>
+            </li>
+          ))
+        }
+      </ul>
+    </nav>
+  </div>
+</BaseLayout>
+
+<style>
+  .lost-rooms {
+    padding: 8px var(--gutter) 56px;
+  }
+  .lost-rooms ul {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+  }
+</style>

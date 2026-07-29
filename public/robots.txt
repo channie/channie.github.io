@@ -1,0 +1,8 @@
+# Keeping a page out of search is done with a `noindex` robots meta plus
+# sitemap exclusion (see src/data/seo.ts) — deliberately NOT with a Disallow
+# here. Disallow blocks crawling, and a page that is never crawled is never
+# read, so its noindex meta would never be seen. The two would cancel out.
+User-agent: *
+Allow: /
+
+Sitemap: https://channie.org/sitemap-index.xml

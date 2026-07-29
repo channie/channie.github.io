@@ -1,0 +1,45 @@
+---
+/* ============================================================
+   ArrowLink — accent text link with an arrow that nudges right
+   on hover. The arrow is decorative.
+
+   Use inside a larger linked card by passing `as="span"` so it
+   doesn't nest an <a> inside an <a>.
+   ============================================================ */
+import Icon from './Icon.astro';
+
+interface Props {
+  href?: string;
+  as?: 'a' | 'span';
+  label?: string;
+  class?: string;
+}
+const { href, as, label, class: className }: Props = Astro.props;
+const Tag = as ?? (href ? 'a' : 'span');
+const attrs = Tag === 'a' && href ? { href } : {};
+---
+
+<Tag class:list={['arrow-link', className]} {...attrs}>
+  {label ?? <slot />}
+  <Icon name="arrow" size={18} class="arw" />
+</Tag>
+
+<style>
+  .arrow-link {
+    font-family: var(--font-sans);
+    color: var(--accent);
+    font-weight: 600;
+    letter-spacing: 0.02em;
+    font-size: var(--text-md);
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5em;
+  }
+  .arrow-link :global(.arw) {
+    transition: transform var(--dur-arrow) var(--ease);
+  }
+  .arrow-link:hover :global(.arw),
+  .arrow-link:focus-visible :global(.arw) {
+    transform: translateX(5px);
+  }
+</style>

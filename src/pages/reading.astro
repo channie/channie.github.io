@@ -1,0 +1,26 @@
+---
+import { getCollection } from 'astro:content';
+import BaseLayout from '../layouts/BaseLayout.astro';
+import PageHead from '../components/PageHead.astro';
+import ReadingFlip from '../components/ReadingFlip.astro';
+
+const head = {
+  eyebrow: 'Reading',
+  title: 'Books that made a difference',
+  intro:
+    'Short notes, quotes, and voice postcards from books that left an impression.',
+};
+
+const books = (await getCollection('books', ({ data }) => !data.draft)).sort(
+  (a, b) => a.data.order - b.data.order
+);
+---
+
+<BaseLayout title="Reading" active="Reading" description={head.intro}>
+  <div class="col">
+    <PageHead eyebrow={head.eyebrow} title={head.title} intro={head.intro} />
+  </div>
+  {/* The flip lives outside .col so the "book" spread can be wider than the
+     text column — it centres itself (see ReadingFlip's .readstage). */}
+  {books.length > 0 && <ReadingFlip books={books} />}
+</BaseLayout>

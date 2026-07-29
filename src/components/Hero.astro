@@ -1,0 +1,221 @@
+---
+/* ============================================================
+   Hero — full-bleed photo with a cinematic dark overlay + a top
+   scrim for nav legibility, the brand/nav (hero variant),
+   the credo blockquote, and a wavy divider into the page.
+
+   The photo is an optimized <Picture> (AVIF/WebP), eager + high
+   priority since it's the LCP element — NOT a CSS background.
+   ============================================================ */
+import { Picture } from 'astro:assets';
+import SiteHeader from './SiteHeader.astro';
+import heroImg from '../assets/images/hero.jpg';
+import { credo } from '../data/home';
+---
+
+<section class="hero">
+  <Picture
+    src={heroImg}
+    formats={['avif', 'webp']}
+    fallbackFormat="jpeg"
+    widths={[768, 1280, 1920, 2400]}
+    sizes="100vw"
+    alt=""
+    loading="eager"
+    fetchpriority="high"
+    class="hero-img"
+  />
+  <div class="hero-overlay" aria-hidden="true"></div>
+
+  <SiteHeader variant="hero" active="Home" />
+
+  <div class="hero-quote">
+    <span class="qmark" aria-hidden="true">“</span>
+    <blockquote class="credo">
+      {credo.map((line) => <span class="line">{line} </span>)}
+    </blockquote>
+  </div>
+
+  <svg class="wave" viewBox="0 0 1440 64" preserveAspectRatio="none" aria-hidden="true">
+    <path
+      fill="currentColor"
+      d="M0,40 C180,8 360,8 540,32 C720,56 900,64 1080,44 C1230,28 1350,24 1440,34 L1440,64 L0,64 Z"
+    ></path>
+  </svg>
+</section>
+
+<style>
+  .hero {
+    position: relative;
+    isolation: isolate;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    min-height: 560px;
+  }
+
+  /* Optimized photo, behind everything */
+  .hero-img {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center 38%;
+    z-index: 0;
+  }
+
+  /* Cinematic dark overlay (multi-stop, off --hero-base) + top scrim for nav
+     + a quote-legibility scrim behind the credo. */
+  .hero::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+    pointer-events: none;
+    background:
+      /* Quote scrim: a radial centred behind the credo that ENDS ON A ~2% FLOOR
+         (never `transparent`) — with no fade-to-zero in view there's no slope
+         discontinuity and thus no visible boundary against the photo; the far
+         field just holds an imperceptible wash. Lifts the credo off bright spots
+         (e.g. the lit shopfront). Paired with the credo text-shadow below. */
+      radial-gradient(
+        135% 125% at 18% 62%,
+        color-mix(in srgb, var(--hero-base) 33%, transparent) 0%,
+        color-mix(in srgb, var(--hero-base) 24%, transparent) 24%,
+        color-mix(in srgb, var(--hero-base) 15%, transparent) 46%,
+        color-mix(in srgb, var(--hero-base) 8%, transparent) 66%,
+        color-mix(in srgb, var(--hero-base) 4%, transparent) 84%,
+        color-mix(in srgb, var(--hero-base) 2%, transparent) 100%
+      ),
+      linear-gradient(
+        105deg,
+        color-mix(in srgb, var(--hero-base) 72%, transparent) 0%,
+        color-mix(in srgb, var(--hero-base) 40%, transparent) 38%,
+        color-mix(in srgb, var(--hero-base) 10%, transparent) 68%,
+        transparent 100%
+      ),
+      linear-gradient(
+        to top,
+        color-mix(in srgb, var(--hero-base) 48%, transparent) 0%,
+        transparent 40%
+      );
+  }
+  /* 190px top scrim so cream brand + nav hold over a bright photo */
+  .hero::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 190px;
+    z-index: 1;
+    pointer-events: none;
+    background: linear-gradient(
+      to bottom,
+      color-mix(in srgb, var(--hero-base) 48%, transparent) 0%,
+      color-mix(in srgb, var(--hero-base) 16%, transparent) 55%,
+      transparent 100%
+    );
+  }
+
+  /* SiteHeader sits above the overlays */
+  .hero :global(.site-header) {
+    z-index: 3;
+  }
+
+  .hero-quote {
+    position: relative;
+    z-index: 2;
+    padding: 18px 24px 84px;
+    /* mobile: keep the credo in a narrow column so it wraps sooner
+       (overridden at >=600 below) */
+    max-width: 290px;
+  }
+  .qmark {
+    display: block;
+    font-family: var(--font-display);
+    color: var(--accent2);
+    line-height: 0.7;
+    font-size: 52px;
+    margin-bottom: 2px;
+  }
+  .credo {
+    margin: 0;
+    font-family: var(--font-display);
+    font-style: italic;
+    font-weight: 400;
+    color: #fbf2e4;
+    letter-spacing: 0.005em;
+    font-size: 23px;
+    line-height: 1.42;
+  }
+  .credo .line {
+    display: inline;
+  }
+  /* Soft halo (a quiet dark glow, not a hard drop shadow) so the cream credo
+     holds over any bright patch behind it — paired with the .hero::before scrim. */
+  .credo,
+  .qmark {
+    text-shadow:
+      0 1px 2px rgba(20, 16, 13, 0.45),
+      0 2px 18px rgba(20, 16, 13, 0.5);
+  }
+
+  .wave {
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: -1px;
+    z-index: 2;
+    width: 100%;
+    height: 38px;
+    display: block;
+    color: var(--bg);
+  }
+
+  /* ---- Tablet ≥600 ---- */
+  @container page (min-width: 600px) {
+    .hero {
+      min-height: 680px;
+    }
+    .hero-quote {
+      padding: 26px 40px 96px;
+      max-width: 660px;
+    }
+    .credo .line {
+      display: block;
+    }
+    .qmark {
+      font-size: 66px;
+    }
+    .credo {
+      font-size: 32px;
+      line-height: 1.36;
+    }
+    .wave {
+      height: 52px;
+    }
+  }
+
+  /* ---- Desktop ≥1024 ---- */
+  @container page (min-width: 1024px) {
+    .hero {
+      min-height: 760px;
+    }
+    .hero-quote {
+      padding: 30px 56px 110px;
+      max-width: 720px;
+    }
+    .qmark {
+      font-size: 78px;
+    }
+    .credo {
+      font-size: 39px;
+      line-height: 1.34;
+    }
+    .wave {
+      height: 64px;
+    }
+  }
+</style>

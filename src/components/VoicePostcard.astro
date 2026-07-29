@@ -1,0 +1,195 @@
+---
+/* ============================================================
+   VoicePostcard — a small "play" pill for a book quote read aloud
+   (Channie's own recording). Two states:
+
+   - LIVE (a real recording exists): a play/pause pill wired to an
+     <audio preload="none"> — so no audio bytes load until the visitor
+     hits play. The waveform fills as it plays. Behaviour lives in the
+     tested controller src/lib/voicePostcard.ts (repo island convention).
+   - SOON (no recording yet): the same pill rendered inert (aria-disabled)
+     with a "soon" badge and no <audio>, so nothing loads and the
+     controller skips it. Wiring audio later needs no markup change here.
+   ============================================================ */
+interface Props {
+  /** emitted URL of the recording; when set the pill is a live player */
+  src?: string;
+  /** real clip length "M:SS" read at build (present only in the live state) */
+  duration?: string | null;
+}
+const { src, duration }: Props = Astro.props;
+const live = Boolean(src);
+
+// Fixed bar heights so the waveform renders identically every build.
+const WAVE = [5, 9, 14, 20, 16, 11, 7, 12, 18, 22, 15, 9, 6, 11, 17, 21, 14, 8, 12, 16, 10, 6, 9, 13];
+---
+
+{
+  live ? (
+    <span class="pc-wrap" data-postcard data-playing="false">
+      <button type="button" class="postcard" data-play aria-label="Play voice postcard">
+        <span class="pc-play" aria-hidden="true">
+          <svg class="ic-play" width="13" height="15" viewBox="0 0 13 15"><path d="M1 1 L12 7.5 L1 14 Z" /></svg>
+          <svg class="ic-pause" width="12" height="14" viewBox="0 0 12 14"><rect x="1" y="1" width="3.4" height="12" rx="1" /><rect x="7.6" y="1" width="3.4" height="12" rx="1" /></svg>
+        </span>
+        <span class="pc-label">Voice postcard</span>
+        <span class="wave-bars" data-wave aria-hidden="true">
+          {WAVE.map((h) => <i style={`height:${h}px`} />)}
+        </span>
+        {duration && <span class="pc-time">{duration}</span>}
+      </button>
+      <audio data-audio preload="none" src={src} />
+    </span>
+  ) : (
+    <button type="button" class="postcard" aria-disabled="true" aria-label="Voice postcard — coming soon">
+      <span class="pc-play" aria-hidden="true">
+        <svg class="ic-play" width="13" height="15" viewBox="0 0 13 15"><path d="M1 1 L12 7.5 L1 14 Z" /></svg>
+      </span>
+      <span class="pc-label">Voice postcard</span>
+      <span class="wave-bars" aria-hidden="true">
+        {WAVE.map((h) => <i style={`height:${h}px`} />)}
+      </span>
+      <span class="pc-soon">soon</span>
+    </button>
+  )
+}
+
+<style>
+  .pc-wrap {
+    display: inline-flex;
+    max-width: 100%;
+    min-width: 0;
+  }
+  .postcard {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-3);
+    align-self: flex-start;
+    max-width: 100%;
+    min-width: 0;
+    background: var(--card);
+    border: 1px solid var(--line);
+    border-radius: var(--radius-pill);
+    padding: var(--space-2) var(--space-4) var(--space-2) var(--space-2);
+    cursor: default;
+  }
+  /* the live pill is an actual control */
+  .pc-wrap .postcard {
+    cursor: pointer;
+    transition: border-color 0.2s var(--ease);
+  }
+  .pc-wrap .postcard:hover {
+    border-color: color-mix(in srgb, var(--accent) 40%, var(--line));
+  }
+  .postcard:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 2px;
+  }
+  .pc-play {
+    position: relative;
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background: var(--accent);
+    color: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex: none;
+    opacity: 0.92;
+  }
+  .pc-play svg {
+    fill: #fff;
+  }
+  .ic-play {
+    margin-left: 2px;
+  }
+  /* play/pause icon swap follows the controller's data-playing state */
+  .ic-pause {
+    display: none;
+  }
+  .pc-wrap[data-playing='true'] .ic-play {
+    display: none;
+  }
+  .pc-wrap[data-playing='true'] .ic-pause {
+    display: block;
+  }
+  .pc-label {
+    font-family: var(--font-sans);
+    font-size: var(--text-xs);
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--accent);
+    flex: none;
+    white-space: nowrap;
+  }
+  .wave-bars {
+    display: flex;
+    align-items: center;
+    gap: 2.5px;
+    height: 24px;
+    flex: 1 1 0;
+    min-width: 0;
+    overflow: hidden;
+  }
+  .wave-bars i {
+    flex: none;
+    width: 2.5px;
+    border-radius: 2px;
+    background: color-mix(in srgb, var(--accent) 30%, var(--card));
+    transition: background 0.12s var(--ease);
+  }
+  /* the controller lights bars left-to-right as the clip plays */
+  .wave-bars i.on {
+    background: var(--accent);
+  }
+  .pc-time {
+    font-family: var(--font-sans);
+    font-size: var(--text-xs);
+    color: var(--muted);
+    flex: none;
+    font-variant-numeric: tabular-nums;
+  }
+  .pc-soon {
+    font-family: var(--font-sans);
+    font-size: var(--text-3xs);
+    font-weight: 700;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--muted);
+    border: 1px solid var(--line);
+    border-radius: var(--radius-pill);
+    padding: 1px 7px;
+    flex: none;
+  }
+
+  @container page (max-width: 599.98px) {
+    /* On a narrow column the pill fills the width and lets play + waveform +
+       time carry it. The "Voice postcard" LABEL (a fixed-width block) is the
+       one thing dropped — kept as the control's aria-label — so the flexible
+       waveform absorbs the slack and the duration never overflows the pill. */
+    .pc-wrap {
+      width: 100%;
+    }
+    .postcard {
+      width: 100%;
+      gap: var(--space-2);
+      padding: 6px 12px 6px 6px;
+    }
+    .pc-play {
+      width: 28px;
+      height: 28px;
+    }
+    .pc-label {
+      display: none;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .pc-wrap .postcard,
+    .wave-bars i {
+      transition: none;
+    }
+  }
+</style>

@@ -1,0 +1,87 @@
+---
+/* ============================================================
+   VideoLoop — a short, silent, looping clip.
+
+     <VideoLoop src="/video/started.mp4" poster={startedPoster}
+       lead="First winter." caption="A wedge, and a lot of hope." />
+
+   Video does NOT go through astro:assets (Astro optimizes images
+   only), so the file lives in `public/video/` and is referenced by
+   absolute path. Keep clips short, silent and under ~2MB. The POSTER
+   is a normal co-located image and is optimized.
+
+   Progressive enhancement, matching the site's island pattern:
+   server-rendered it is an ordinary <video controls> with a poster,
+   which works with no JS at all. The script then turns it into a
+   muted autoplaying loop and sets data-enhanced. It deliberately
+   does NOT enhance under prefers-reduced-motion — an autoplaying
+   loop is exactly the motion that setting asks us not to start —
+   and it pauses the clip while it is off screen.
+   ============================================================ */
+import { getImage } from 'astro:assets';
+import type { ImageMetadata } from 'astro';
+
+interface Props {
+  /** absolute path under public/, e.g. "/video/started.mp4" */
+  src: string;
+  poster: ImageMetadata;
+  lead?: string;
+  caption?: string;
+  /** describes the clip for screen readers and for users who can't play it */
+  label: string;
+}
+const { src, poster, lead, caption, label }: Props = Astro.props;
+const posterImg = await getImage({ src: poster, width: 900 });
+---
+
+<figure class="vloop">
+  <video
+    src={src}
+    poster={posterImg.src}
+    preload="none"
+    playsinline
+    muted
+    loop
+    controls
+    aria-label={label}></video>
+  {
+    (lead || caption) && (
+      <figcaption>
+        {lead && <b>{lead}</b>}
+        {lead && caption ? ' ' : ''}
+        {caption}
+      </figcaption>
+    )
+  }
+</figure>
+
+<style>
+  .vloop {
+    margin: 0;
+  }
+  .vloop video {
+    display: block;
+    width: 100%;
+    height: auto;
+    background: var(--slate);
+    border-radius: var(--radius-media);
+  }
+  figcaption {
+    font-family: var(--font-sans);
+    font-size: var(--text-sm);
+    line-height: 1.5;
+    color: var(--muted);
+    margin-top: var(--space-3);
+  }
+  figcaption b {
+    color: var(--ink);
+    font-weight: 600;
+  }
+</style>
+
+<script>
+  // Island behaviour lives in a testable controller (see lib/videoLoop.ts),
+  // mirroring how initPlayers backs the podcast players.
+  import { initVideoLoops } from '../../lib/videoLoop';
+  initVideoLoops();
+</script>

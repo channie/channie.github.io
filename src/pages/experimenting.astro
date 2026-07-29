@@ -1,0 +1,264 @@
+---
+import { getCollection } from 'astro:content';
+import { Image } from 'astro:assets';
+import BaseLayout from '../layouts/BaseLayout.astro';
+import PageHead from '../components/PageHead.astro';
+import ArrowLink from '../components/ArrowLink.astro';
+
+const head = {
+  eyebrow: 'Experimenting',
+  title: 'Things I’m trying out',
+  intro:
+    'Small projects, experiments, and AI workflows. Thinking out loud while it’s still in progress.',
+};
+
+const all = (await getCollection('experiments', ({ data }) => !data.draft)).sort(
+  (a, b) => b.data.date.valueOf() - a.data.date.valueOf()
+);
+const featured = all.find((e) => e.data.featured) ?? all[0];
+const rest = all.filter((e) => e.id !== featured?.id);
+
+const fmt = (d: Date) =>
+  new Intl.DateTimeFormat('en-US', {
+    month: 'short',
+    day: 'numeric',
+    year: 'numeric',
+    timeZone: 'UTC',
+  }).format(d);
+// co-located posts are <slug>/index.md → keep the URL as /experimenting/<slug>
+const slugOf = (id: string) => id.replace(/\/index$/, '');
+const href = (id: string) => `/experimenting/${slugOf(id)}/`;
+---
+
+<BaseLayout title="Experimenting" active="Experimenting" description={head.intro}>
+  <div class="col">
+    <PageHead eyebrow={head.eyebrow} title={head.title} intro={head.intro} />
+
+  {
+    featured && (
+      <a class="artfeat" href={href(featured.id)}>
+        <div class="afimg">
+          {featured.data.hero ? (
+            <Image src={featured.data.hero} alt="" widths={[480, 720, 960]} sizes="(min-width:600px) 50vw, 90vw" />
+          ) : (
+            <span class="tile" data-cat={featured.data.category} />
+          )}
+        </div>
+        <div class="afbody">
+          <p class="ameta">
+            <span class="acat">{featured.data.category}</span>
+            <span class="adot">·</span><time datetime={featured.data.date.toISOString()}>{fmt(featured.data.date)}</time>
+            {featured.data.read && (<><span class="adot">·</span>{featured.data.read} read</>)}
+          </p>
+          <h2 class="atitle">{featured.data.title}</h2>
+          <p class="aexc">{featured.data.excerpt}</p>
+          <ArrowLink as="span">Read the note</ArrowLink>
+        </div>
+      </a>
+    )
+  }
+
+  <div class="artlist">
+    {
+      rest.map((e) => (
+        <a class="artrow" href={href(e.id)}>
+          <div class="arbody">
+            <p class="ameta">
+              <span class="acat">{e.data.category}</span>
+              <span class="adot">·</span><time datetime={e.data.date.toISOString()}>{fmt(e.data.date)}</time>
+              {e.data.read && (<><span class="adot">·</span>{e.data.read} read</>)}
+            </p>
+            <h3 class="artitle">{e.data.title}</h3>
+            <p class="aexc row">{e.data.excerpt}</p>
+          </div>
+          <div class="arthumb">
+            {e.data.hero ? (
+              <Image src={e.data.hero} alt="" widths={[96, 220, 440]} sizes="220px" />
+            ) : (
+              <span class="tile small">{e.data.category}</span>
+            )}
+          </div>
+        </a>
+      ))
+    }
+    </div>
+  </div>
+</BaseLayout>
+
+<style>
+  .ameta {
+    font-family: var(--font-sans);
+    color: var(--muted);
+    font-size: var(--text-sm);
+    letter-spacing: 0.02em;
+    display: flex;
+    align-items: center;
+    gap: 9px;
+    flex-wrap: wrap;
+  }
+  .acat {
+    color: var(--accent);
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.14em;
+  }
+  .adot {
+    opacity: 0.5;
+  }
+
+  img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.5s var(--ease);
+  }
+
+  /* CSS fallback "cover" for posts without an image */
+  .tile {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    height: 100%;
+    background: color-mix(in srgb, var(--accent) 10%, var(--card));
+    color: var(--accent);
+    font-family: var(--font-sans);
+    text-transform: uppercase;
+    letter-spacing: var(--tracking-eyebrow-tight);
+    font-weight: 700;
+    font-size: var(--text-xs);
+    text-align: center;
+    padding: var(--space-2);
+  }
+  .tile::before {
+    content: '✦';
+    color: var(--accent2);
+    margin-right: 6px;
+  }
+
+  /* ---- Featured article ---- */
+  .artfeat {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: var(--space-5);
+    margin: 8px var(--gutter);
+    padding-bottom: 30px;
+    border-bottom: 1px solid var(--line);
+  }
+  .afimg {
+    overflow: hidden;
+    border-radius: var(--radius-media);
+    background: var(--card);
+    height: 220px;
+  }
+  .artfeat:hover .afimg img {
+    transform: scale(1.04);
+  }
+  .afbody {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: var(--space-4);
+  }
+  .atitle {
+    font-family: var(--font-display);
+    font-weight: 500;
+    color: var(--ink);
+    letter-spacing: -0.01em;
+    line-height: 1.1;
+    font-size: var(--text-3xl);
+  }
+  .aexc {
+    font-family: var(--font-sans);
+    color: var(--muted);
+    line-height: 1.62;
+    font-size: var(--text-md);
+  }
+
+  /* ---- List rows ---- */
+  .artlist {
+    padding: 6px var(--gutter) 20px;
+  }
+  .artrow {
+    display: grid;
+    grid-template-columns: 1fr 96px;
+    gap: 18px;
+    align-items: center;
+    padding: var(--space-6) 0;
+    border-bottom: 1px solid var(--line);
+  }
+  .arbody {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-3);
+  }
+  .artitle {
+    font-family: var(--font-display);
+    font-weight: 500;
+    color: var(--ink);
+    line-height: 1.16;
+    letter-spacing: -0.005em;
+    font-size: var(--text-xl);
+    transition: color 0.2s var(--ease);
+  }
+  .artrow:hover .artitle {
+    color: var(--accent);
+  }
+  .aexc.row {
+    display: none;
+  }
+  .arthumb {
+    overflow: hidden;
+    border-radius: var(--radius-media);
+    background: var(--card);
+    height: 96px;
+  }
+  .artrow:hover .arthumb img {
+    transform: scale(1.05);
+  }
+
+  @container page (min-width: 600px) {
+    .artfeat {
+      grid-template-columns: 1.05fr 1fr;
+      gap: var(--space-10);
+      margin: 14px var(--gutter) 8px;
+      padding-bottom: var(--space-12);
+    }
+    .afimg {
+      height: 320px;
+    }
+    .artlist {
+      padding: 18px var(--gutter) 30px;
+    }
+    .artrow {
+      grid-template-columns: 1fr 200px;
+      gap: 36px;
+      padding: 32px 0;
+    }
+    .aexc.row {
+      display: block;
+      margin: 0;
+    }
+    .arthumb {
+      height: 128px;
+    }
+  }
+
+  @container page (min-width: 1024px) {
+    .artfeat {
+      gap: var(--space-12);
+      padding-bottom: 52px;
+    }
+    .afimg {
+      height: 360px;
+    }
+    .artrow {
+      grid-template-columns: 1fr 220px;
+      gap: var(--space-10);
+      padding: 34px 0;
+    }
+    .arthumb {
+      height: 132px;
+    }
+  }
+</style>

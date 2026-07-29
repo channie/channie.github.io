@@ -1,0 +1,178 @@
+---
+/* ============================================================
+   FeatureArticle — the magazine feature presentation for a post with
+   `presentation: feature` in its frontmatter. Standard posts are
+   unaffected and keep the single-column article body in [slug].astro.
+
+   THE GRID IS THE WHOLE IDEA. The prose is laid out on a named
+   five-track grid: a narrow reading `measure`, a `wide` track that
+   adds the margins, and `full` from edge to edge. Everything in the
+   flow lands in `measure`; a component opts into a wider track by
+   carrying .u-wide / .u-full (see Breakout.astro, which owns those
+   classes). That is why images can break the column without any
+   negative-margin tricks and without the components knowing anything
+   about the page width.
+
+   Feature components live in src/components/feature/ and are imported
+   by the POST's MDX, not here — this file owns the frame, they own
+   the furniture.
+   ============================================================ */
+import type { CollectionEntry } from 'astro:content';
+import FeatureMasthead from '../components/feature/FeatureMasthead.astro';
+
+interface Props {
+  entry: CollectionEntry<'experiments'>;
+}
+const { entry } = Astro.props;
+const d = entry.data;
+
+const fmt = (date: Date) =>
+  new Intl.DateTimeFormat('en-US', {
+    month: 'short',
+    day: 'numeric',
+    year: 'numeric',
+    timeZone: 'UTC',
+  }).format(date);
+---
+
+<article class="feature">
+  <FeatureMasthead
+    title={d.title}
+    kicker={d.kicker}
+    deck={d.deck}
+    byline={d.byline}
+    hero={d.hero}
+    heroAlt={d.heroAlt}
+  />
+
+  <div class="meta">
+    <a class="back" href="/experimenting/">← Experimenting</a>
+    <p class="ameta">
+      <span class="acat">{d.category}</span>
+      <span class="adot">·</span><time datetime={d.date.toISOString()}>{fmt(d.date)}</time>
+      {d.read && (<><span class="adot">·</span>{d.read} read</>)}
+    </p>
+  </div>
+
+  <div class="fprose">
+    <slot />
+  </div>
+</article>
+
+<style>
+  .feature {
+    padding-bottom: var(--space-16);
+  }
+
+  .meta {
+    max-width: var(--feature-max);
+    margin: 0 auto;
+    padding: var(--space-8) var(--gutter) 0;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: var(--space-4);
+  }
+  .back {
+    font-family: var(--font-sans);
+    font-size: var(--text-md);
+    color: var(--accent);
+    font-weight: 600;
+  }
+  .ameta {
+    font-family: var(--font-sans);
+    color: var(--muted);
+    font-size: var(--text-sm);
+    display: flex;
+    align-items: center;
+    gap: 9px;
+    flex-wrap: wrap;
+    margin: 0;
+  }
+  .acat {
+    color: var(--accent);
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.14em;
+  }
+  .adot {
+    opacity: 0.5;
+  }
+
+  /* ---- the measure / wide / full grid ---- */
+  .fprose {
+    display: grid;
+    grid-template-columns:
+      [full-start] minmax(var(--gutter), 1fr)
+      [wide-start] minmax(0, calc((var(--feature-max) - var(--feature-measure)) / 2))
+      [measure-start] min(var(--feature-measure), 100% - var(--gutter) * 2) [measure-end]
+      minmax(0, calc((var(--feature-max) - var(--feature-measure)) / 2)) [wide-end]
+      minmax(var(--gutter), 1fr) [full-end];
+    padding-top: var(--space-10);
+  }
+  /* Everything sits in the reading measure unless it opts out. The
+     children are authored in MDX (a different scope), so these have to
+     be :global. */
+  .fprose > :global(*) {
+    grid-column: measure-start / measure-end;
+  }
+  .fprose > :global(.u-wide) {
+    grid-column: wide-start / wide-end;
+  }
+  .fprose > :global(.u-full) {
+    grid-column: full-start / full-end;
+  }
+
+  /* ---- body copy ---- */
+  .fprose :global(p) {
+    font-family: var(--font-sans);
+    color: var(--ink);
+    font-size: var(--text-prose);
+    line-height: 1.72;
+    margin: 0 0 1.05em;
+  }
+  .fprose :global(em) {
+    font-style: italic;
+  }
+  .fprose :global(strong) {
+    font-weight: 600;
+  }
+  .fprose :global(a) {
+    color: var(--accent);
+    text-decoration: underline;
+    text-underline-offset: 2px;
+  }
+  .fprose :global(hr) {
+    border: none;
+    height: 1px;
+    width: 64px;
+    background: var(--line);
+    margin: 2.2em auto;
+  }
+  .fprose :global(blockquote) {
+    margin: 1.6em 0;
+    padding-left: 20px;
+    border-left: 2px solid var(--accent2);
+    font-family: var(--font-display);
+    font-style: italic;
+    font-size: var(--text-xl);
+    line-height: 1.4;
+  }
+
+  /* The opening drop cap. Applies to the post's first paragraph, so a
+     feature post should OPEN ON PROSE, not on a component. */
+  .fprose > :global(p:first-of-type)::first-letter {
+    font-family: var(--font-display);
+    float: left;
+    font-size: 4.9em;
+    line-height: 0.76;
+    font-weight: 500;
+    padding: 6px 10px 0 0;
+    color: var(--accent);
+  }
+  .fprose > :global(p:first-of-type)::first-line {
+    font-variant-caps: small-caps;
+    letter-spacing: 0.03em;
+  }
+</style>

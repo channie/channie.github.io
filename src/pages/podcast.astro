@@ -1,0 +1,57 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import PageHead from '../components/PageHead.astro';
+import PodcastPlayer from '../components/PodcastPlayer.astro';
+import PlatformRow from '../components/PlatformRow.astro';
+import { getPodcast } from '../lib/podcast';
+import { podcastMeta, podcastPlatforms } from '../data/podcast';
+
+const { show, latest, episodes } = getPodcast();
+
+// Cap the in-page "Episodes" list (newest first) so a long back-catalogue
+// can't grow the player without bound — "See all episodes" links to the full
+// archive on Spotify. The homepage band only ever uses `latest`.
+const EPISODE_LIST_MAX = 6;
+const listedEpisodes = episodes.slice(0, EPISODE_LIST_MAX);
+const seeAllUrl = podcastPlatforms.find((p) => p.slug === 'spotify')!.url;
+---
+
+<BaseLayout title="Podcast" active="Podcast" description={podcastMeta.metaDescription}>
+  <div class="col">
+    <PageHead
+      eyebrow={podcastMeta.eyebrow}
+      title={show.title}
+      intro={podcastMeta.description}
+      centered
+    />
+  </div>
+
+  {
+    /* The player sits OUTSIDE the content column so its desktop two-column
+       layout can run a little wider than the text content (a deliberate look);
+       it centres itself at its own max-width. */
+    latest ? (
+      <PodcastPlayer
+        showTitle={show.title}
+        seeAllUrl={seeAllUrl}
+        latest={latest}
+        episodes={listedEpisodes}
+      />
+    ) : (
+      <div class="col">
+        <p class="empty">Episodes are on their way — check back soon.</p>
+      </div>
+    )
+  }
+
+  <PlatformRow platforms={podcastPlatforms} />
+</BaseLayout>
+
+<style>
+  .empty {
+    font-family: var(--font-sans);
+    color: var(--muted);
+    font-size: var(--text-base);
+    padding: 24px var(--gutter);
+  }
+</style>

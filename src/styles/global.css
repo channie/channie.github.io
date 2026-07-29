@@ -1,0 +1,143 @@
+/* ============================================================
+   Channie.org — global base styles
+   Reset + base element styling + a11y primitives + the page
+   container that drives container-query responsiveness.
+   Tokens come from tokens.css (imported first in BaseLayout).
+   ============================================================ */
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+}
+
+body {
+  font-family: var(--font-sans);
+  color: var(--ink);
+  background: var(--bg);
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+  min-height: 100vh;
+}
+
+img,
+picture,
+svg,
+video {
+  display: block;
+  max-width: 100%;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+button {
+  font: inherit;
+  color: inherit;
+  background: none;
+  border: none;
+  cursor: pointer;
+}
+
+h1,
+h2,
+h3,
+h4 {
+  font-weight: 400;
+  line-height: 1.1;
+}
+
+/* ---- Visible keyboard focus on every interactive element ---- */
+:where(a, button, input, select, textarea, [tabindex]):focus-visible {
+  outline: var(--focus-ring);
+  outline-offset: var(--focus-offset);
+  border-radius: 6px;
+}
+
+/* ---- The page container: drives all responsive layout via container queries.
+        Every page wraps its content in `.page` so components can size against
+        the container width, not just the viewport. ---- */
+.page {
+  width: 100%;
+  container-type: inline-size;
+  container-name: page;
+}
+
+/* Active page gutter. Components read --gutter for their horizontal padding.
+   This scales with the VIEWPORT (not a container query): an element can't respond
+   to its own container query, and on the live site the .page container width equals
+   the viewport. Component *internal* layout still uses @container page. */
+@media (min-width: 600px) {
+  :root {
+    --gutter: var(--gutter-tablet);
+  }
+}
+@media (min-width: 1024px) {
+  :root {
+    --gutter: var(--gutter-desktop);
+  }
+}
+
+/* ---- Utilities ---- */
+
+/* Centered content column (desktop). Caps content width and centers it; only
+   bites above ~--content-max, so mobile/tablet are unaffected. Inner elements
+   keep their own --gutter padding/margins. Hero/full-bleed bands opt out. */
+.col {
+  max-width: var(--content-max);
+  margin-inline: auto;
+}
+
+/* Screen-reader-only (visually hidden, still announced) */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* Skip link — visible on focus */
+.skip-link {
+  position: absolute;
+  left: 12px;
+  top: -48px;
+  z-index: 100;
+  background: var(--ink);
+  color: var(--bg);
+  padding: 10px 16px;
+  border-radius: 6px;
+  font-family: var(--font-sans);
+  font-size: 14px;
+  transition: top 0.18s var(--ease);
+}
+.skip-link:focus {
+  top: 12px;
+}
+
+/* ---- Reduced motion: respect the user's preference ---- */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
+  }
+}

@@ -1,0 +1,22 @@
+---
+/* ============================================================
+   EndMark — the small square that closes a feature.
+
+     Which makes me wonder what else is on that list. <EndMark />
+
+   Place it inline at the end of the last paragraph. Purely
+   typographic, so it is hidden from assistive tech.
+   ============================================================ */
+---
+
+<span class="endmark" aria-hidden="true"></span>
+
+<style>
+  .endmark {
+    display: inline-block;
+    width: 9px;
+    height: 9px;
+    background: var(--accent);
+    margin-left: var(--space-2);
+  }
+</style>

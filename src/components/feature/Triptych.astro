@@ -1,0 +1,84 @@
+---
+/* ============================================================
+   Triptych — three photographs in a row under one shared caption.
+
+     <Triptych
+       images={[{ src: b1, alt: '' }, { src: b2 }, { src: b3 }]}
+       lead="The bunny hill, first winter."
+       caption="It seemed considerably steeper at the time." />
+
+   For a sequence where the repetition IS the point and no single
+   frame earns its own caption. Stacks to a single column on phones.
+   ============================================================ */
+import { Image } from 'astro:assets';
+import type { ImageMetadata } from 'astro';
+
+interface Props {
+  images: { src: ImageMetadata; alt?: string }[];
+  lead?: string;
+  caption?: string;
+  /** default `measure` — a triptych is a small sequence, and at the wide
+      track the frames get big enough to compete with the photographs
+      that are supposed to carry the piece */
+  width?: 'measure' | 'wide';
+}
+const { images, lead, caption, width = 'measure' }: Props = Astro.props;
+---
+
+<figure class:list={['trip', width === 'wide' ? 'u-wide' : '']}>
+  <div class="frames">
+    {
+      images.map((im) => (
+        <Image src={im.src} alt={im.alt ?? ''} widths={[220, 440, 660]} sizes="(min-width: 600px) 200px, 90vw" />
+      ))
+    }
+  </div>
+  {
+    (lead || caption) && (
+      <figcaption>
+        {lead && <b>{lead}</b>}
+        {lead && caption ? ' ' : ''}
+        {caption}
+      </figcaption>
+    )
+  }
+</figure>
+
+<style>
+  .trip {
+    margin: var(--space-16) 0;
+  }
+  .frames {
+    display: grid;
+    gap: var(--space-3);
+    grid-template-columns: 1fr;
+  }
+  @container page (min-width: 600px) {
+    .frames {
+      grid-template-columns: repeat(3, 1fr);
+      gap: var(--space-2);
+    }
+  }
+  /* No forced aspect-ratio / object-fit crop — the frames render at their
+     natural ratio. A sequence like this is usually shot on one camera, so
+     they line up on their own, and cropping to a fixed box is what makes
+     them look zoomed in. */
+  .frames :global(img) {
+    display: block;
+    width: 100%;
+    height: auto;
+    background: var(--card);
+    border-radius: var(--radius-media);
+  }
+  figcaption {
+    font-family: var(--font-sans);
+    font-size: var(--text-sm);
+    line-height: 1.5;
+    color: var(--muted);
+    margin-top: var(--space-3);
+  }
+  figcaption b {
+    color: var(--ink);
+    font-weight: 600;
+  }
+</style>

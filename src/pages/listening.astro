@@ -1,0 +1,438 @@
+---
+/* ============================================================
+   /listening — the "field notes" listening diary.
+   Every show is one taped-in instant photo (its cover art) beside a
+   handwritten memo: ↻ when-I-reach-for-it, title, credit, the memo
+   itself, and a quiet link into the show's detail page. One flowing
+   page — no tabs; Chinese and English shows interleave (sorted by
+   `order`), and Chinese entries trail a loose English translation.
+
+   Static by design: the whole entry is a link, the only motion is a
+   hover ease on the photo + link arrow. Diary fields live in each
+   show's frontmatter (memo/when/cap + *En twins) — see the listening
+   collection in content.config.ts.
+   ============================================================ */
+// Caveat (the handwriting face) loads only on this page; the shared
+// --font-hand token falls back quietly everywhere else.
+import '@fontsource-variable/caveat/index.css';
+import { Image } from 'astro:assets';
+import { getCollection } from 'astro:content';
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Eyebrow from '../components/Eyebrow.astro';
+import { listeningMeta, listeningOrder } from '../data/listening';
+
+const shows = await getCollection('listening', ({ data }) => !data.draft);
+const slugOf = (entry: (typeof shows)[number]) => entry.id.replace(/\/index$/, '');
+
+// Order is driven ENTIRELY by listeningOrder in src/data/listening.ts (the one
+// place to reorder the page). Guard against drift so nothing silently vanishes:
+// every visible show must be listed exactly once, and every listed slug must exist.
+const slugs = shows.map(slugOf);
+const missing = slugs.filter((s) => !listeningOrder.includes(s));
+const unknown = listeningOrder.filter((s) => !slugs.includes(s));
+if (missing.length || unknown.length) {
+  const parts = [
+    missing.length && `not in listeningOrder: ${missing.join(', ')}`,
+    unknown.length && `listed but no such show: ${unknown.join(', ')}`,
+  ].filter(Boolean);
+  throw new Error(
+    `Listening order is out of sync with the shows — ${parts.join('; ')}. ` +
+      `Fix the list in src/data/listening.ts.`,
+  );
+}
+
+const byOrder = new Map(shows.map((e) => [slugOf(e), e]));
+const ordered = listeningOrder.map((slug) => byOrder.get(slug)!);
+
+const entries = ordered.map((entry) => {
+  const d = entry.data;
+  const epN = d.episodes.length;
+  const hasNote = Boolean(entry.body && entry.body.trim());
+  return {
+    d,
+    slug: slugOf(entry),
+    initial: d.title.trim().charAt(0),
+    zh: d.lang === 'zh',
+    // what the detail page actually holds (never a bare episode count)
+    inside:
+      epN > 0
+        ? `${epN} episode pick${epN === 1 ? '' : 's'} inside`
+        : hasNote
+          ? 'the full note inside'
+          : 'where to listen',
+  };
+});
+---
+
+<BaseLayout title="Listening" active="Listening" description={listeningMeta.introEn}>
+  <div class="fnotes">
+    <header class="fn-head">
+      <Eyebrow>{listeningMeta.eyebrow}</Eyebrow>
+      <h1>On <em>repeat</em> lately</h1>
+      <p class="fn-sub">
+        <span lang="zh-Hant">{listeningMeta.intro}</span>
+        <span class="fn-sub-en">{listeningMeta.introEn}</span>
+      </p>
+    </header>
+
+    <div class="fn-list">
+      {
+        entries.map(({ d, slug, initial, zh, inside }) => (
+          <a class="fn-entry" href={`/listening/${slug}/`}>
+            <div class="fn-photo">
+              <span class="fn-tape" aria-hidden="true" />
+              <span class="pcover" style={!d.logo && d.color ? `background:${d.color}` : undefined}>
+                {d.logo && (
+                  <Image src={d.logo} alt="" widths={[220, 440]} sizes="206px" class="pcover-img" />
+                )}
+                {!d.logo && (
+                  <span class="pcover-initial" aria-hidden="true">
+                    {initial}
+                  </span>
+                )}
+              </span>
+              {d.cap && (
+                <span class="fn-cap" lang={zh ? 'zh-Hant' : undefined}>
+                  {d.cap}
+                </span>
+              )}
+            </div>
+
+            <div class="fn-body">
+              {d.whenEyebrow && (
+                <p class="fn-date">
+                  <span aria-hidden="true">↻ </span>
+                  {d.whenEyebrow}
+                </p>
+              )}
+              <h2 class="fn-title" lang={zh ? 'zh-Hant' : undefined}>
+                {d.title}
+              </h2>
+              <p class="fn-kind">
+                {d.kind}
+                {(d.byEn ?? d.by) && ` · ${d.byEn ?? d.by}`}
+              </p>
+              {d.memo && (
+                <p class="fn-note" lang={zh ? 'zh-Hant' : undefined}>
+                  {d.memo}
+                  {d.memoEn && (
+                    <span class="fn-note-en" lang="en">
+                      {d.memoEn}
+                    </span>
+                  )}
+                </p>
+              )}
+              <span class="fn-more">
+                {inside}
+                <svg
+                  class="fn-arw"
+                  viewBox="0 0 14 14"
+                  width="12"
+                  height="12"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="1.7"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  aria-hidden="true"
+                >
+                  <path d="M2.5 7h9M8 3.5 11.5 7 8 10.5" />
+                </svg>
+              </span>
+            </div>
+          </a>
+        ))
+      }
+    </div>
+  </div>
+</BaseLayout>
+
+<style>
+  /* Photo-prop colors — the paper, ink, and washi tape of the taped photos.
+     Deliberately NOT theme tokens: they're physical props (a photo stays a
+     photo under any theme), the same in Terracotta and Lily. */
+  .fnotes {
+    --paper: #fdfaf1;
+    --caption-ink: #7a4a2f;
+    --note-ink: #3a2c22;
+    --tape: rgba(224, 151, 88, 0.34);
+    /* Caveat's x-height runs visually small, so the handwritten elements
+       keep their own sizes instead of the content type scale. */
+    --hand-note: 23px;
+    --hand-date: 21px;
+    --hand-cap: 18px;
+    padding-bottom: var(--space-6);
+  }
+
+  /* ---- page head (original title/subtitle, diary styling) ---- */
+  .fn-head {
+    padding: 40px var(--gutter) 4px;
+  }
+  .fn-head h1 {
+    font-family: var(--font-display);
+    font-weight: 500;
+    font-size: var(--text-4xl);
+    line-height: 1.02;
+    color: var(--ink);
+    margin-top: 14px;
+  }
+  .fn-head h1 em {
+    font-family: var(--font-hand);
+    font-style: normal;
+    color: var(--accent);
+    font-size: 1.12em;
+  }
+  .fn-sub {
+    font-family: var(--font-hand);
+    font-size: var(--hand-note);
+    line-height: 1.5;
+    color: color-mix(in srgb, var(--ink) 72%, transparent);
+    margin-top: 10px;
+    display: flex;
+    flex-wrap: wrap;
+    column-gap: 14px;
+    row-gap: 2px;
+    align-items: baseline;
+  }
+  /* the English half rides in the plain subtitle sans (matching every other
+     page's PageHead intro), not the handwriting — the Chinese line leads. */
+  .fn-sub-en {
+    font-family: var(--font-sans);
+    font-size: var(--text-base);
+    color: var(--muted);
+  }
+
+  /* ---- the diary list ---- */
+  .fn-list {
+    padding: 8px var(--gutter) 0;
+  }
+
+  /* Each entry is ONE link: photo column + body column. Mobile stacks. */
+  .fn-entry {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 18px;
+    justify-items: start;
+    padding: 26px 0;
+    border-bottom: 1px dashed color-mix(in srgb, var(--ink) 28%, transparent);
+    align-items: start;
+  }
+  .fn-entry:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 6px;
+    border-radius: 4px;
+  }
+
+  /* ---- taped instant photo ---- */
+  .fn-photo {
+    position: relative;
+    width: 206px;
+    background: var(--paper);
+    padding: 9px 9px 34px; /* deep bottom margin holds the caption */
+    box-shadow: 0 14px 26px -14px rgba(30, 18, 10, 0.5);
+    transform: rotate(-2deg);
+    transition: transform 0.3s var(--ease);
+  }
+  .fn-entry:nth-child(even) .fn-photo {
+    transform: rotate(1.6deg);
+  }
+  /* hover: the photo straightens + lifts toward you */
+  .fn-entry:hover .fn-photo,
+  .fn-entry:focus-visible .fn-photo {
+    transform: rotate(0) scale(1.02);
+  }
+  .fn-tape {
+    position: absolute;
+    top: -11px;
+    left: 50%;
+    width: 70px;
+    height: 24px;
+    transform: translateX(-50%) rotate(-3deg);
+    background: var(--tape);
+    box-shadow: 0 1px 3px rgba(30, 18, 10, 0.14);
+    border-left: 1px dashed rgba(255, 255, 255, 0.5);
+    border-right: 1px dashed rgba(255, 255, 255, 0.5);
+  }
+  .pcover {
+    position: relative;
+    display: block;
+    aspect-ratio: 1 / 1;
+    border-radius: 1px;
+    overflow: hidden;
+    background: #241a13;
+  }
+  /* hairline inset so light covers keep an edge against the paper */
+  .pcover::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: 1px;
+    box-shadow: inset 0 0 0 1px rgba(42, 32, 26, 0.08);
+    pointer-events: none;
+  }
+  .pcover-img {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  .pcover-initial {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: var(--font-display);
+    font-weight: 500;
+    font-size: var(--text-6xl);
+    color: #f7e9d6;
+    opacity: 0.96;
+  }
+  .fn-cap {
+    position: absolute;
+    left: 6px;
+    right: 6px;
+    bottom: 8px;
+    text-align: center;
+    font-family: var(--font-hand);
+    font-size: var(--hand-cap);
+    color: var(--caption-ink);
+    line-height: 1;
+    white-space: nowrap;
+    overflow: hidden;
+  }
+
+  /* ---- body column ---- */
+  .fn-body {
+    min-width: 0;
+  }
+  .fn-date {
+    font-family: var(--font-hand);
+    font-size: var(--hand-date);
+    color: var(--accent);
+    line-height: 1;
+  }
+  .fn-title {
+    font-family: var(--font-display);
+    font-weight: 500;
+    font-size: var(--text-2xl);
+    line-height: 1.1;
+    color: var(--ink);
+    margin-top: 6px;
+  }
+  /* WenKai renders visually larger than Latin at a given px, so a Chinese
+     title steps down a size to sit at a similar height to the English ones. */
+  .fn-title[lang='zh-Hant'] {
+    font-size: var(--text-xl);
+  }
+  .fn-kind {
+    font-family: var(--font-sans-latin);
+    text-transform: uppercase;
+    letter-spacing: var(--tracking-eyebrow-tight);
+    font-size: var(--text-2xs);
+    font-weight: 700;
+    color: var(--muted);
+    margin-top: var(--space-2);
+  }
+  .fn-note {
+    font-family: var(--font-hand);
+    font-size: var(--hand-note);
+    line-height: 1.42;
+    color: var(--note-ink);
+    margin-top: var(--space-3);
+    max-width: 660px;
+  }
+  /* A Chinese memo takes the detail page's note voice — WenKai in an italic
+     context (a gently synthesized slant) at the notes size — rather than the
+     Caveat handwriting used for the English memos. */
+  .fn-note[lang='zh-Hant'] {
+    font-family: var(--font-display);
+    font-style: italic;
+    font-size: var(--text-lg);
+    line-height: 1.75;
+  }
+  /* the English translation under a Chinese memo — the deliberate switch
+     to the sans face + dotted rule is what says "this is a translation"
+     (upright, so it doesn't inherit the Chinese memo's slant) */
+  .fn-note-en {
+    display: block;
+    font-family: var(--font-sans);
+    font-style: normal;
+    font-size: var(--text-base);
+    line-height: 1.6;
+    color: var(--muted);
+    letter-spacing: 0.005em;
+    margin-top: 10px;
+    padding-top: 10px;
+    border-top: 1px dotted color-mix(in srgb, var(--ink) 22%, transparent);
+    max-width: 600px;
+  }
+  .fn-more {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-family: var(--font-sans);
+    font-weight: 600;
+    font-size: var(--text-xs);
+    letter-spacing: 0.03em;
+    color: var(--accent);
+    margin-top: 14px;
+  }
+  .fn-arw {
+    transition: transform 0.25s var(--ease);
+  }
+  .fn-entry:hover .fn-arw,
+  .fn-entry:focus-visible .fn-arw {
+    transform: translateX(4px);
+  }
+
+  /* ---- ≥600 (tablet): photo column beside the body ---- */
+  @container page (min-width: 600px) {
+    .fn-head {
+      padding: 56px var(--gutter) 6px;
+    }
+    .fn-list {
+      padding-top: 10px;
+    }
+    .fn-entry {
+      grid-template-columns: 150px 1fr;
+      gap: var(--space-8);
+      padding: 30px 0;
+    }
+    .fn-photo {
+      width: auto;
+      justify-self: stretch;
+      transform: rotate(-2.6deg);
+    }
+    .fn-entry:nth-child(even) .fn-photo {
+      transform: rotate(2deg);
+    }
+    .fn-entry:hover .fn-photo,
+    .fn-entry:focus-visible .fn-photo {
+      transform: rotate(0) scale(1.02);
+    }
+  }
+
+  /* ---- ≥1024 (desktop): wider photo, roomier gutter ---- */
+  @container page (min-width: 1024px) {
+    .fn-head {
+      padding-top: var(--space-16);
+    }
+    .fn-entry {
+      grid-template-columns: 172px 1fr;
+      gap: 44px;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .fn-photo,
+    .fn-arw {
+      transition: none;
+    }
+    .fn-entry:hover .fn-photo,
+    .fn-entry:focus-visible .fn-photo {
+      transform: none;
+    }
+  }
+</style>

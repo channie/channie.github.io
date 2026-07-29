@@ -1,0 +1,344 @@
+---
+/* ============================================================
+   /podcast-share/ — the standalone follow page for the podcast.
+   The link to hand out (and the show's "podcast website" in the
+   RSS feed): someone lands here and taps their podcast app in
+   one move; anyone without a podcast app can stream the latest
+   episode right on the page.
+
+   Reduced chrome by design: a minimal header (brand + a single
+   "personal site" link back home) instead of the site nav. The
+   show description comes from the RSS snapshot (refreshed by the
+   daily cron), so it follows the feed — never edited here.
+   ============================================================ */
+import { Image } from 'astro:assets';
+import BaseLayout from '../layouts/BaseLayout.astro';
+import PodcastPlayer from '../components/PodcastPlayer.astro';
+import { getPodcast } from '../lib/podcast';
+import { podcastPlatforms } from '../data/podcast';
+import { platformGlyph } from '../data/platformGlyphs';
+import { site } from '../data/site';
+import showLogo from '../assets/images/podcast-show-logo.png';
+
+const { show, latest, episodes } = getPodcast();
+
+// Same cap + "see all" target as the Podcast page (see podcast.astro).
+const EPISODE_LIST_MAX = 6;
+const listedEpisodes = episodes.slice(0, EPISODE_LIST_MAX);
+const seeAllUrl = podcastPlatforms.find((p) => p.slug === 'spotify')!.url;
+---
+
+<BaseLayout
+  title={show.title}
+  header="none"
+  description={show.description}
+  ogImage="/og/podcast-share.png"
+  ogImageAlt={`${show.title} — follow the podcast`}
+>
+  <header class="share-head">
+    <a class="brand" href="/" aria-label={`${site.name} — home`}>
+      <span class="brand-name">{site.name}</span>
+      <span class="brand-pron">{site.pron}</span>
+    </a>
+    <a class="head-link" href="/">
+      {site.name} · personal site <span aria-hidden="true">&#8599;</span>
+    </a>
+  </header>
+
+  <div class="share-wrap">
+    {/* The logo card carries the show name visually; keep a hidden h1 for SEO/a11y. */}
+    <h1 class="sr-only">{show.title}</h1>
+
+    <section class="share-hero">
+      <div class="share-logo">
+        <Image
+          src={showLogo}
+          alt={`${show.title} — podcast logo`}
+          widths={[372, 744]}
+          sizes="(min-width: 1024px) 372px, (min-width: 600px) 330px, 240px"
+          class="share-logo-img"
+        />
+      </div>
+      <p class="share-desc">{show.description}</p>
+    </section>
+
+    <section aria-labelledby="follow-head">
+      <h2 class="follow-head" id="follow-head">Follow in your favorite app</h2>
+      <div class="bigplat">
+        {
+          podcastPlatforms.map((p) => (
+            <a class="bigbtn" href={p.url} target="_blank" rel="noopener noreferrer">
+              <span class="pglyph" aria-hidden="true" style={`color:${p.color}`} set:html={platformGlyph(p.slug)} />
+              <span class="bmain">
+                <span class="bname">{p.name}</span>
+                <span class="bsub">Follow the show</span>
+              </span>
+              <span class="barrow" aria-hidden="true">
+                <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg>
+              </span>
+            </a>
+          ))
+        }
+      </div>
+    </section>
+
+    {
+      latest && (
+        <section class="listen-here">
+          <p class="lh-label">
+            Or listen right here — <b>latest episode</b>
+          </p>
+          <PodcastPlayer
+            showTitle={show.title}
+            seeAllUrl={seeAllUrl}
+            latest={latest}
+            episodes={listedEpisodes}
+          />
+        </section>
+      )
+    }
+  </div>
+</BaseLayout>
+
+<style>
+  /* ---- minimal header (no site nav — one move back to the home page) ---- */
+  .share-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-4);
+    padding: 22px var(--gutter);
+    border-bottom: 1px solid var(--line);
+  }
+  .brand {
+    display: inline-flex;
+    flex-direction: column;
+    gap: 7px;
+  }
+  /* brand lockup sizes match SiteHeader so the page feels like the same site */
+  .brand-name {
+    font-family: var(--font-display);
+    font-size: 26px;
+    line-height: 0.9;
+    letter-spacing: 0.01em;
+    color: var(--ink);
+  }
+  .brand-pron {
+    font-family: var(--font-sans);
+    text-transform: uppercase;
+    letter-spacing: 0.28em;
+    font-size: 10px;
+    font-weight: 600;
+    white-space: nowrap;
+    color: var(--muted);
+  }
+  .head-link {
+    font-family: var(--font-sans);
+    font-size: var(--text-sm);
+    font-weight: 600;
+    color: var(--accent);
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    white-space: nowrap;
+    position: relative;
+    padding-bottom: 3px;
+  }
+  /* Underline grows left→right on hover/focus — the shared nav idiom from
+     SiteHeader `.nav-link` (same --dur-nav timing). Absolutely positioned so
+     the flex `gap` between the label and the ↗ doesn't split it into two. */
+  .head-link::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    height: 1px;
+    width: 0;
+    background: currentColor;
+    transition: width var(--dur-nav) var(--ease);
+  }
+  .head-link:hover::after,
+  .head-link:focus-visible::after {
+    width: 100%;
+  }
+
+  .share-wrap {
+    max-width: 920px;
+    margin: 0 auto;
+    padding: 34px var(--gutter) 8px;
+  }
+
+  /* ---- hero: logo card + feed-driven description ---- */
+  .share-hero {
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-bottom: 34px;
+  }
+  .share-logo {
+    width: min(240px, 80cqw);
+    border-radius: var(--radius-player);
+    overflow: hidden;
+    /* a true-white card behind the logo art — no token (nothing else is pure
+       white); the show cover shadow + player-card radius come from tokens */
+    background: #fff;
+    border: 1px solid var(--line);
+    box-shadow: var(--shadow-cover);
+    margin-bottom: 26px;
+  }
+  .share-logo-img {
+    width: 100%;
+    height: auto;
+    display: block;
+  }
+  .share-desc {
+    font-family: var(--font-sans);
+    color: var(--muted);
+    line-height: 1.65;
+    font-size: var(--text-lg);
+    max-width: 600px;
+    margin: 0 auto;
+    text-wrap: pretty;
+  }
+
+  /* ---- big platform buttons ---- */
+  .follow-head {
+    font-family: var(--font-sans);
+    text-transform: uppercase;
+    letter-spacing: var(--tracking-eyebrow);
+    font-weight: 700;
+    font-size: var(--text-xs);
+    color: var(--accent);
+    text-align: center;
+    margin-bottom: 18px;
+  }
+  .bigplat {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: var(--space-3);
+  }
+  .bigbtn {
+    display: flex;
+    align-items: center;
+    justify-content: center; /* single-column: icon + name centered */
+    gap: 12px;
+    border: 1px solid var(--line);
+    border-radius: var(--radius-player);
+    padding: 14px 18px;
+    background: var(--card);
+    min-height: 56px;
+    transition:
+      border-color var(--dur-btn) var(--ease),
+      transform var(--dur-btn) var(--ease),
+      box-shadow var(--dur-btn) var(--ease);
+  }
+  .bigbtn:hover {
+    border-color: var(--accent);
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-card-hover);
+  }
+  .pglyph {
+    width: 26px;
+    height: 26px;
+    flex: none;
+    display: inline-flex;
+  }
+  .pglyph :global(svg) {
+    width: 100%;
+    height: 100%;
+  }
+  .bmain {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    min-width: 0;
+  }
+  .bname {
+    font-family: var(--font-sans);
+    font-weight: 600;
+    font-size: var(--text-md);
+    color: var(--ink);
+  }
+  /* the "Follow the show" subtext + chevron are two-column furniture; the
+     single-column (phone) buttons show just a centered icon + name */
+  .bsub {
+    display: none;
+    font-family: var(--font-sans);
+    font-size: var(--text-xs);
+    color: var(--muted);
+  }
+  .barrow {
+    display: none;
+    margin-left: auto;
+    color: var(--muted);
+    flex: none;
+    transition:
+      color var(--dur-btn) var(--ease),
+      transform var(--dur-btn) var(--ease);
+  }
+  .bigbtn:hover .barrow {
+    color: var(--accent);
+    transform: translateX(3px);
+  }
+
+  /* ---- "or listen right here" + the shared player ---- */
+  .listen-here {
+    margin-top: 44px;
+  }
+  .lh-label {
+    text-align: center;
+    font-family: var(--font-sans);
+    font-size: var(--text-md);
+    color: var(--muted);
+    margin-bottom: var(--space-5);
+  }
+  .lh-label b {
+    color: var(--ink);
+    font-weight: 600;
+  }
+  /* the player's own margins target the full page; snug it into this column */
+  .listen-here :global(.emb) {
+    margin-inline: 0;
+  }
+
+  /* ---- ≥600 (tablet up): two-column buttons with subtext + chevron ---- */
+  @container page (min-width: 600px) {
+    .share-wrap {
+      padding-top: 44px;
+    }
+    .share-logo {
+      width: min(330px, 70cqw);
+    }
+    .bigplat {
+      grid-template-columns: 1fr 1fr;
+    }
+    .bigbtn {
+      justify-content: flex-start;
+      gap: 15px;
+      padding: 15px 18px;
+    }
+    .bsub {
+      display: block;
+    }
+    .barrow {
+      display: inline-flex;
+    }
+    .listen-here :global(.emb) {
+      margin-inline: auto;
+    }
+  }
+
+  @container page (min-width: 1024px) {
+    .share-logo {
+      width: 372px;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .bigbtn,
+    .barrow {
+      transition: none;
+    }
+  }
+</style>

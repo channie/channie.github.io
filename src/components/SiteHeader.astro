@@ -1,0 +1,399 @@
+---
+/* ============================================================
+   SiteHeader — shared brand lockup + primary nav.
+   - Full nav row at ≥600px; collapses to an accessible menu button below.
+   - `variant="inner"` (default): solid, ink-on-cream, bottom hairline.
+   - `variant="hero"`: transparent over the hero photo, cream text +
+     text-shadow (used by the homepage hero).
+   - Single <nav> source of truth. JS toggles the small-screen panel;
+     a <noscript> fallback shows the links when JS is unavailable.
+   ============================================================ */
+import { site } from '../data/site';
+import Icon from './Icon.astro';
+
+interface Props {
+  active?: string;
+  variant?: 'inner' | 'hero';
+}
+const { active, variant = 'inner' }: Props = Astro.props;
+---
+
+<header class:list={['site-header', `is-${variant}`]} data-site-header>
+  <a class="brand" href="/" aria-label={`${site.name} — home`}>
+    <span class="brand-name">{site.name}</span>
+    <span class="brand-pron">{site.pron}</span>
+  </a>
+
+  <button
+    type="button"
+    class="burger"
+    aria-label="Open menu"
+    aria-expanded="false"
+    aria-controls="primary-nav"
+    data-menu-toggle
+  >
+    <Icon name="menu" size={24} />
+  </button>
+
+  <nav id="primary-nav" class="nav" aria-label="Primary">
+    {
+      site.nav.map((item, i) => (
+        <a
+          href={item.href}
+          class:list={['nav-link', { active: item.label === active }]}
+          aria-current={item.label === active ? 'page' : undefined}
+        >
+          <span class="nav-num" aria-hidden="true">{String(i + 1).padStart(2, '0')}</span>
+          <span class="nav-label">{item.label}</span>
+          <span class="nav-arrow" aria-hidden="true">→</span>
+        </a>
+      ))
+    }
+  </nav>
+
+  <noscript>
+    <style>
+      /* No JS: never hide the nav; hide the (non-functional) burger. */
+      .site-header .nav {
+        display: flex !important;
+      }
+      .site-header .burger {
+        display: none !important;
+      }
+    </style>
+  </noscript>
+</header>
+
+<style>
+  .site-header {
+    position: relative;
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: var(--space-4);
+    padding: 22px var(--gutter);
+  }
+
+  /* ---- Brand lockup ---- */
+  .brand {
+    display: inline-flex;
+    flex-direction: column;
+    gap: 7px;
+  }
+  .brand-name {
+    font-family: var(--font-display);
+    font-size: 26px;
+    line-height: 0.9;
+    letter-spacing: 0.01em;
+    color: var(--ink);
+  }
+  .brand-pron {
+    font-family: var(--font-sans);
+    text-transform: uppercase;
+    letter-spacing: 0.28em;
+    font-size: 10px;
+    font-weight: 600;
+    white-space: nowrap;
+    color: var(--muted);
+  }
+
+  /* ---- Nav (desktop = inline row; mobile open = editorial list) ---- */
+  .nav {
+    display: none; /* shown ≥600, or when toggled open <600 */
+    flex-direction: column;
+  }
+  .nav-link {
+    font-family: var(--font-sans);
+    font-size: 15px;
+    letter-spacing: 0.04em;
+    color: var(--ink);
+    opacity: 0.7;
+    padding-bottom: 3px;
+    position: relative;
+  }
+  .nav-link::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    height: 1px;
+    width: 0;
+    background: var(--accent);
+    transition: width var(--dur-nav) var(--ease);
+  }
+  .nav-link:hover::after,
+  .nav-link:focus-visible::after,
+  .nav-link.active::after {
+    width: 100%;
+  }
+  .nav-link.active {
+    opacity: 1;
+    color: var(--accent);
+  }
+  /* the number + arrow only appear in the mobile editorial menu */
+  .nav-num,
+  .nav-arrow {
+    display: none;
+  }
+
+  /* ---- Burger (small screens) ---- */
+  .burger {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 44px;
+    height: 44px;
+    margin: -8px -8px 0 0; /* keep 44px target without shifting layout */
+    color: var(--ink);
+    border-radius: 8px;
+  }
+
+  /* ============================================================
+     Mobile open state — editorial section selector:
+     numbered rows, hairline dividers, arrow on hover/active,
+     active item in italic carnelian. (Overrides hero cream links.)
+     ============================================================ */
+  .site-header[data-menu-open='true'] .nav {
+    display: flex;
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    z-index: 20;
+    background: var(--bg);
+    border-bottom: 1px solid var(--line);
+    box-shadow: var(--shadow-card-hover);
+  }
+  .site-header[data-menu-open='true'] .nav-link {
+    display: flex;
+    align-items: baseline;
+    gap: 18px;
+    padding: 17px var(--gutter);
+    border-top: 1px solid var(--line);
+    color: var(--ink);
+    opacity: 1;
+    text-shadow: none;
+  }
+  .site-header[data-menu-open='true'] .nav-link::after {
+    display: none; /* no growing underline here */
+  }
+  .site-header[data-menu-open='true'] .nav-num {
+    display: block;
+    flex: none;
+    min-width: 1.7em;
+    font-family: var(--font-sans);
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    color: var(--muted);
+    font-variant-numeric: tabular-nums;
+  }
+  .site-header[data-menu-open='true'] .nav-label {
+    font-family: var(--font-display);
+    font-style: normal;
+    font-weight: 400;
+    font-size: 27px;
+    line-height: 1;
+    color: var(--ink);
+  }
+  .site-header[data-menu-open='true'] .nav-arrow {
+    display: inline-flex;
+    margin-left: auto;
+    align-self: center;
+    color: var(--accent);
+    font-size: 20px;
+    line-height: 1;
+    opacity: 0;
+    transform: translateX(-6px);
+    transition:
+      opacity 0.2s var(--ease),
+      transform 0.2s var(--ease);
+  }
+  .site-header[data-menu-open='true'] .nav-link:hover .nav-arrow,
+  .site-header[data-menu-open='true'] .nav-link:focus-visible .nav-arrow,
+  .site-header[data-menu-open='true'] .nav-link.active .nav-arrow {
+    opacity: 1;
+    transform: translateX(0);
+  }
+  .site-header[data-menu-open='true'] .nav-link.active .nav-label {
+    font-family: var(--font-display);
+    font-style: italic;
+    font-weight: 400;
+    color: var(--accent);
+  }
+  .site-header[data-menu-open='true'] .nav-link.active .nav-num {
+    color: var(--accent);
+  }
+
+  /* ---- Inner variant (default) ---- */
+  .is-inner {
+    background: var(--bg);
+    border-bottom: 1px solid var(--line);
+    /* sticky on small screens so the brand + menu stay reachable while
+       scrolling; reset to static at ≥600px (see breakpoint below) */
+    position: sticky;
+    top: 0;
+    z-index: 30;
+    transition:
+      transform 0.28s var(--ease),
+      box-shadow 0.28s var(--ease);
+  }
+
+  /* Small screens: auto-hiding header (the common mobile pattern) —
+     slides up out of view while scrolling down, returns on scroll up,
+     and floats on a soft shadow once away from the very top. JS sets
+     the data-attributes. Scoped so the ≥600px static header is unaffected. */
+  @container page (max-width: 599.98px) {
+    .is-inner[data-scrolled='true'] {
+      box-shadow: 0 6px 18px -10px rgba(20, 16, 13, 0.4);
+    }
+    .is-inner[data-hidden='true'] {
+      transform: translateY(-100%);
+    }
+  }
+
+  /* ---- Hero variant (transparent over the hero photo) ---- */
+  .is-hero {
+    background: transparent;
+    border-bottom: none;
+  }
+  .is-hero .brand-name {
+    color: #f7ecda;
+    text-shadow: 0 1px 10px rgba(20, 16, 13, 0.5);
+  }
+  .is-hero .brand-pron {
+    color: rgba(247, 236, 218, 0.72);
+    text-shadow: 0 1px 8px rgba(20, 16, 13, 0.5);
+  }
+  .is-hero .nav-link {
+    color: #f3e7d6;
+    opacity: 0.9;
+    text-shadow: 0 1px 8px rgba(20, 16, 13, 0.55);
+  }
+  .is-hero .nav-link::after {
+    background: #f7e4cc;
+  }
+  .is-hero .nav-link.active {
+    opacity: 1;
+    color: #fff;
+  }
+  .is-hero .burger {
+    color: #f3e7d6;
+  }
+
+  /* ============================================================
+     ≥600px: full nav row, no burger
+     ============================================================ */
+  @container page (min-width: 600px) {
+    .site-header {
+      padding: 28px var(--gutter);
+      align-items: center;
+    }
+    /* full nav row on desktop — no need to pin it */
+    .is-inner {
+      position: relative;
+      top: auto;
+      z-index: auto;
+    }
+    .brand-name {
+      font-size: 29px;
+    }
+    .burger {
+      display: none;
+    }
+    .nav {
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+      gap: var(--space-6);
+    }
+  }
+
+  @container page (min-width: 1024px) {
+    .site-header {
+      padding: 30px var(--gutter);
+    }
+    .brand-name {
+      font-size: 31px;
+    }
+    .nav {
+      gap: 34px;
+    }
+  }
+</style>
+
+<script>
+  // Accessible small-screen menu toggle. Single source of truth nav.
+  document.querySelectorAll<HTMLElement>('[data-site-header]').forEach((header) => {
+    const toggle = header.querySelector<HTMLButtonElement>('[data-menu-toggle]');
+    if (!toggle) return;
+
+    const setOpen = (open: boolean) => {
+      header.dataset.menuOpen = String(open);
+      toggle.setAttribute('aria-expanded', String(open));
+      toggle.setAttribute('aria-label', open ? 'Close menu' : 'Open menu');
+    };
+
+    toggle.addEventListener('click', () => {
+      setOpen(header.dataset.menuOpen !== 'true');
+    });
+
+    // Close on Escape (return focus to the toggle).
+    header.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && header.dataset.menuOpen === 'true') {
+        setOpen(false);
+        toggle.focus();
+      }
+    });
+
+    // Close after choosing a destination.
+    header.querySelectorAll('.nav-link').forEach((link) =>
+      link.addEventListener('click', () => setOpen(false))
+    );
+
+    // Close when clicking outside the header.
+    document.addEventListener('click', (e) => {
+      if (header.dataset.menuOpen === 'true' && !header.contains(e.target as Node)) {
+        setOpen(false);
+      }
+    });
+
+    // Auto-hide on scroll (small screens only; CSS scopes the effect).
+    // Hide while scrolling down, reveal on scroll up, always show near the
+    // top or while the menu is open. rAF-throttled.
+    if (header.classList.contains('is-inner')) {
+      let lastY = Math.max(0, window.scrollY);
+      let ticking = false;
+      const REVEAL_AT = 72; // px from top below which we always show
+      const JITTER = 6; // ignore sub-pixel/scroll-bounce noise
+
+      const update = () => {
+        ticking = false;
+        const y = Math.max(0, window.scrollY);
+        header.dataset.scrolled = y > 4 ? 'true' : 'false';
+
+        if (header.dataset.menuOpen === 'true' || y <= REVEAL_AT) {
+          header.dataset.hidden = 'false';
+          lastY = y;
+          return;
+        }
+        const delta = y - lastY;
+        if (Math.abs(delta) > JITTER) {
+          header.dataset.hidden = delta > 0 ? 'true' : 'false';
+          lastY = y;
+        }
+      };
+
+      window.addEventListener(
+        'scroll',
+        () => {
+          if (!ticking) {
+            requestAnimationFrame(update);
+            ticking = true;
+          }
+        },
+        { passive: true }
+      );
+    }
+  });
+</script>
