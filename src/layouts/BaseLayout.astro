@@ -52,6 +52,14 @@ interface Props {
       remove the page from the sitemap — also add its path to NOINDEX_PATHS
       in src/data/seo.ts (the sitemap filter in astro.config.mjs reads it). */
   noindex?: boolean;
+  /**
+   * Preloads the page's LCP image from <head>, so the fetch starts during CSS
+   * parse instead of when the parser reaches the <img> in the body. Only worth
+   * it for an above-the-fold hero (today: the homepage — see lib/heroImage).
+   * `srcset`/`sizes` MUST match the rendered <picture> or the browser fetches
+   * a second file and the preload costs more than it saves.
+   */
+  preloadImage?: { srcset: string; sizes: string; type: string };
 }
 
 const {
@@ -67,6 +75,7 @@ const {
   ogImageAlt = `${site.name} — ${site.domain}`,
   publishedTime,
   noindex = false,
+  preloadImage,
 }: Props = Astro.props;
 const fullTitle = title ? `${title} · ${site.name}` : `${site.name} — personal site`;
 /* Pages pass human-facing copy (a post's full excerpt, the podcast's RSS
@@ -89,6 +98,18 @@ const { goatcounter } = site.analytics;
     <link rel="canonical" href={canonical} />
     {noindex && <meta name="robots" content="noindex, follow" />}
     <meta name="theme-color" content="#f4e9d6" />
+
+    {/* LCP image preload — kept high in <head> so the fetch is in flight
+        before the render-blocking stylesheets resolve. Opt-in per page. */}
+    {preloadImage && (
+      <link
+        rel="preload"
+        as="image"
+        imagesrcset={preloadImage.srcset}
+        imagesizes={preloadImage.sizes}
+        type={preloadImage.type}
+      />
+    )}
 
     <!-- Favicons + touch icon (committed in public/) -->
     <link rel="icon" type="image/x-icon" href="/favicon.ico" />

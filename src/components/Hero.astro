@@ -4,25 +4,40 @@
    scrim for nav legibility, the brand/nav (hero variant),
    the credo blockquote, and a wavy divider into the page.
 
-   The photo is an optimized <Picture> (AVIF/WebP), eager + high
-   priority since it's the LCP element — NOT a CSS background.
+   The photo is an optimized <Picture> (AVIF/WebP) and the LCP element,
+   so it takes Astro's `priority` prop — that one flag is the framework's
+   own way to set loading=eager + fetchpriority=high + decoding=sync
+   (astro/dist/assets/internal.js). It uses `??=`, so the explicit
+   `decoding="async"` here still wins, and it's deliberate: sync decoding
+   couples the first paint to the photo being decoded, so on a slow
+   connection the credo and nav text wait on the photo. The blurred
+   placeholder below already covers that gap, so nothing needs to.
+
+   Astro's `priority` does NOT emit a <link rel="preload">, so that's
+   still ours: widths/sizes come from lib/heroImage precisely so the
+   preload in index.astro describes the same candidates.
    ============================================================ */
 import { Picture } from 'astro:assets';
 import SiteHeader from './SiteHeader.astro';
-import heroImg from '../assets/images/hero.jpg';
+import { heroImg, HERO_WIDTHS, HERO_SIZES } from '../lib/heroImage';
+import { HERO_PLACEHOLDER } from '../data/heroPlaceholder';
 import { credo } from '../data/home';
 ---
 
-<section class="hero">
+{/* The placeholder rides an inline style rather than `define:vars` on the
+    <style> block: define:vars stamps the variable onto EVERY element the
+    component renders, which duplicated this data URI a dozen times and added
+    ~3kB to the homepage. One element, one copy. */}
+<section class="hero" style={`background-image:url("${HERO_PLACEHOLDER}")`}>
   <Picture
     src={heroImg}
     formats={['avif', 'webp']}
     fallbackFormat="jpeg"
-    widths={[768, 1280, 1920, 2400]}
-    sizes="100vw"
+    widths={HERO_WIDTHS}
+    sizes={HERO_SIZES}
     alt=""
-    loading="eager"
-    fetchpriority="high"
+    priority
+    decoding="async"
     class="hero-img"
   />
   <div class="hero-overlay" aria-hidden="true"></div>
@@ -52,6 +67,28 @@ import { credo } from '../data/home';
     display: flex;
     flex-direction: column;
     min-height: 560px;
+    /* What the hero looks like BEFORE the photo is ready. Off localhost it is
+       ready almost immediately (LCP lands with first paint, ~180ms), so this is
+       not covering a local problem — it covers real connections, where the
+       25-136kB the photo actually weighs is hundreds of ms on mobile data, plus
+       decode on top. Under that, an empty hero is what a first-time visitor on
+       a phone sees.
+
+       So paint the photo itself, cheaply: a 24px blurred WebP inlined as a data
+       URI (~200 bytes, no request, decodes instantly). The hero opens soft and
+       resolves to sharp, instead of holding a flat panel and snapping.
+
+       background-color stays underneath as the floor: it covers the sliver
+       before CSS paints and any case where the data URI can't decode, and it
+       themes for free (--hero-base has a Water Lily value). Position/size are
+       matched to the <img>'s object-fit/object-position below so the blur sits
+       exactly where the photo will. */
+    background-color: var(--hero-base);
+    /* background-image (the blurred data URI) is set inline on the element —
+       see the note above the markup. */
+    background-size: cover;
+    background-position: center 38%;
+    background-repeat: no-repeat;
   }
 
   /* Optimized photo, behind everything */

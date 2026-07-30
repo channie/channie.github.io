@@ -5,12 +5,21 @@ import RoomCard from '../components/RoomCard.astro';
 import PodcastBand from '../components/PodcastBand.astro';
 import Eyebrow from '../components/Eyebrow.astro';
 import { explore, rooms } from '../data/home';
+import { heroPreloadSrcset, HERO_SIZES, HERO_PRELOAD_TYPE } from '../lib/heroImage';
 
 const featured = rooms.filter((r) => r.featured);
 const secondary = rooms.filter((r) => !r.featured);
+
+/* The hero photo is this page's LCP element; preload it from <head> so the
+   fetch doesn't wait for the parser to reach <Hero />. */
+const heroPreload = {
+  srcset: await heroPreloadSrcset(),
+  sizes: HERO_SIZES,
+  type: HERO_PRELOAD_TYPE,
+};
 ---
 
-<BaseLayout header="none">
+<BaseLayout header="none" preloadImage={heroPreload}>
   {/* The hero is a credo blockquote, not a heading — give the page a real,
       screen-reader-only <h1> so its outline starts at h1 (then the Explore h2). */}
   <h1 class="sr-only">Channie — personal site</h1>
