@@ -7,20 +7,34 @@
     "imageFile": "26f73b394802.jpg"
   },
   "latest": {
-    "title": "Trop Camus: How a Dead Philosopher Became an Adjective",
-    "description": "In a French novel, a nervous guy rehearses excuses for cancelling a date. He rejects one for being \"trop Camus\"... too Camus. Too Camus? I had to find out what a dead philosopher sounds like.",
-    "date": "2026-07-25T22:36:43.000Z",
-    "dateLabel": "Jul 25, 2026",
-    "durationSeconds": 1185,
-    "duration": "19:45",
-    "minutes": "20 min",
-    "audioUrl": "https://anchor.fm/s/114e11cd8/podcast/play/123323418/https%3A%2F%2Fd3ctxlq1ktw2nl.cloudfront.net%2Fstaging%2F2026-6-25%2F1aea587d-ca74-e697-c752-3d31478816fa.mp3",
-    "pageUrl": "https://podcasters.spotify.com/pod/show/french-curiosity/episodes/Trop-Camus-How-a-Dead-Philosopher-Became-an-Adjective-e3mi1iq",
-    "number": 6,
-    "image": "https://d3t3ozftmdmh3i.cloudfront.net/staging/podcast_uploaded_episode/46352646/46352646-1785018950354-c22705507c60e.jpg",
-    "imageFile": "c3b8644b58c5.jpg"
+    "title": "A Small Curiosity About Red Nails",
+    "description": "My French coworker basically never did her nails. Then she came back from a trip to France with red ones, and I quietly decided this meant something about France.It probably didn't mean anything. I got curious about the red anyway... and one of the first things I found was a 1929 French newspaper explaining that red fingernails look like amputated fingers.",
+    "date": "2026-07-31T19:33:00.000Z",
+    "dateLabel": "Jul 31, 2026",
+    "durationSeconds": 845,
+    "duration": "14:05",
+    "minutes": "14 min",
+    "audioUrl": "https://anchor.fm/s/114e11cd8/podcast/play/123510110/https%3A%2F%2Fd3ctxlq1ktw2nl.cloudfront.net%2Fstaging%2F2026-6-31%2F77102f5b-e7dd-4c9f-851e-4b87b6765f97.mp3",
+    "pageUrl": "https://podcasters.spotify.com/pod/show/french-curiosity/episodes/A-Small-Curiosity-About-Red-Nails-e3mnnsu",
+    "number": 7,
+    "image": "https://d3t3ozftmdmh3i.cloudfront.net/staging/podcast_uploaded_episode/46352646/46352646-1785373993692-3b53edd02585b.jpg",
+    "imageFile": "15fb7c5a736a.jpg"
   },
   "episodes": [
+    {
+      "title": "A Small Curiosity About Red Nails",
+      "description": "My French coworker basically never did her nails. Then she came back from a trip to France with red ones, and I quietly decided this meant something about France.It probably didn't mean anything. I got curious about the red anyway... and one of the first things I found was a 1929 French newspaper explaining that red fingernails look like amputated fingers.",
+      "date": "2026-07-31T19:33:00.000Z",
+      "dateLabel": "Jul 31, 2026",
+      "durationSeconds": 845,
+      "duration": "14:05",
+      "minutes": "14 min",
+      "audioUrl": "https://anchor.fm/s/114e11cd8/podcast/play/123510110/https%3A%2F%2Fd3ctxlq1ktw2nl.cloudfront.net%2Fstaging%2F2026-6-31%2F77102f5b-e7dd-4c9f-851e-4b87b6765f97.mp3",
+      "pageUrl": "https://podcasters.spotify.com/pod/show/french-curiosity/episodes/A-Small-Curiosity-About-Red-Nails-e3mnnsu",
+      "number": 7,
+      "image": "https://d3t3ozftmdmh3i.cloudfront.net/staging/podcast_uploaded_episode/46352646/46352646-1785373993692-3b53edd02585b.jpg",
+      "imageFile": "15fb7c5a736a.jpg"
+    },
     {
       "title": "Trop Camus: How a Dead Philosopher Became an Adjective",
       "description": "In a French novel, a nervous guy rehearses excuses for cancelling a date. He rejects one for being \"trop Camus\"... too Camus. Too Camus? I had to find out what a dead philosopher sounds like.",
@@ -106,5 +120,5 @@
       "imageFile": "c4a72e6fabe6.jpg"
     }
   ],
-  "fetchedAt": "2026-07-29T15:48:49.235Z"
+  "fetchedAt": "2026-08-01T10:45:09.591Z"
 }
