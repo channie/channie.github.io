@@ -7,20 +7,34 @@
     "imageFile": "26f73b394802.jpg"
   },
   "latest": {
-    "title": "A Small Curiosity About Red Nails",
-    "description": "My French coworker basically never did her nails. Then she came back from a trip to France with red ones, and I quietly decided this meant something about France.It probably didn't mean anything. I got curious about the red anyway... and one of the first things I found was a 1929 French newspaper explaining that red fingernails look like amputated fingers.",
-    "date": "2026-07-31T19:33:00.000Z",
-    "dateLabel": "Jul 31, 2026",
-    "durationSeconds": 845,
-    "duration": "14:05",
-    "minutes": "14 min",
-    "audioUrl": "https://anchor.fm/s/114e11cd8/podcast/play/123510110/https%3A%2F%2Fd3ctxlq1ktw2nl.cloudfront.net%2Fstaging%2F2026-6-31%2F77102f5b-e7dd-4c9f-851e-4b87b6765f97.mp3",
-    "pageUrl": "https://podcasters.spotify.com/pod/show/french-curiosity/episodes/A-Small-Curiosity-About-Red-Nails-e3mnnsu",
-    "number": 7,
-    "image": "https://d3t3ozftmdmh3i.cloudfront.net/staging/podcast_uploaded_episode/46352646/46352646-1785373993692-3b53edd02585b.jpg",
-    "imageFile": "15fb7c5a736a.jpg"
+    "title": "Why Do the French Still Smoke So Much?",
+    "description": "Every time I'm in France I notice it. Smoke on every terrace, smoke coming through the restaurant window, a lot more than I'm used to in the US. This episode I finally looked into it. Why?",
+    "date": "2026-08-07T20:51:00.000Z",
+    "dateLabel": "Aug 7, 2026",
+    "durationSeconds": 2159,
+    "duration": "35:59",
+    "minutes": "36 min",
+    "audioUrl": "https://anchor.fm/s/114e11cd8/podcast/play/123921736/https%3A%2F%2Fd3ctxlq1ktw2nl.cloudfront.net%2Fstaging%2F2026-7-7%2F664158bc-2e4e-9b22-bc33-ebeb7442c9c0.mp3",
+    "pageUrl": "https://podcasters.spotify.com/pod/show/french-curiosity/episodes/Why-Do-the-French-Still-Smoke-So-Much-e3n49s8",
+    "number": 8,
+    "image": "https://d3t3ozftmdmh3i.cloudfront.net/staging/podcast_uploaded_episode/46352646/46352646-1786132354507-7030d4da0dfe7.jpg",
+    "imageFile": "1d5006e0742f.jpg"
   },
   "episodes": [
+    {
+      "title": "Why Do the French Still Smoke So Much?",
+      "description": "Every time I'm in France I notice it. Smoke on every terrace, smoke coming through the restaurant window, a lot more than I'm used to in the US. This episode I finally looked into it. Why?",
+      "date": "2026-08-07T20:51:00.000Z",
+      "dateLabel": "Aug 7, 2026",
+      "durationSeconds": 2159,
+      "duration": "35:59",
+      "minutes": "36 min",
+      "audioUrl": "https://anchor.fm/s/114e11cd8/podcast/play/123921736/https%3A%2F%2Fd3ctxlq1ktw2nl.cloudfront.net%2Fstaging%2F2026-7-7%2F664158bc-2e4e-9b22-bc33-ebeb7442c9c0.mp3",
+      "pageUrl": "https://podcasters.spotify.com/pod/show/french-curiosity/episodes/Why-Do-the-French-Still-Smoke-So-Much-e3n49s8",
+      "number": 8,
+      "image": "https://d3t3ozftmdmh3i.cloudfront.net/staging/podcast_uploaded_episode/46352646/46352646-1786132354507-7030d4da0dfe7.jpg",
+      "imageFile": "1d5006e0742f.jpg"
+    },
     {
       "title": "A Small Curiosity About Red Nails",
       "description": "My French coworker basically never did her nails. Then she came back from a trip to France with red ones, and I quietly decided this meant something about France.It probably didn't mean anything. I got curious about the red anyway... and one of the first things I found was a 1929 French newspaper explaining that red fingernails look like amputated fingers.",
@@ -120,5 +134,5 @@
       "imageFile": "c4a72e6fabe6.jpg"
     }
   ],
-  "fetchedAt": "2026-08-01T10:45:09.591Z"
+  "fetchedAt": "2026-08-08T09:45:16.173Z"
 }
