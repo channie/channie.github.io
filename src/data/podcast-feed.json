@@ -7,20 +7,34 @@
     "imageFile": "26f73b394802.jpg"
   },
   "latest": {
-    "title": "Why Do the French Still Smoke So Much?",
-    "description": "Every time I'm in France I notice it. Smoke on every terrace, smoke coming through the restaurant window, a lot more than I'm used to in the US. This episode I finally looked into it. Why?",
-    "date": "2026-08-07T20:51:00.000Z",
-    "dateLabel": "Aug 7, 2026",
-    "durationSeconds": 2159,
-    "duration": "35:59",
-    "minutes": "36 min",
-    "audioUrl": "https://anchor.fm/s/114e11cd8/podcast/play/123921736/https%3A%2F%2Fd3ctxlq1ktw2nl.cloudfront.net%2Fstaging%2F2026-7-7%2F664158bc-2e4e-9b22-bc33-ebeb7442c9c0.mp3",
-    "pageUrl": "https://podcasters.spotify.com/pod/show/french-curiosity/episodes/Why-Do-the-French-Still-Smoke-So-Much-e3n49s8",
-    "number": 8,
-    "image": "https://d3t3ozftmdmh3i.cloudfront.net/staging/podcast_uploaded_episode/46352646/46352646-1786132354507-7030d4da0dfe7.jpg",
-    "imageFile": "1d5006e0742f.jpg"
+    "title": "The French Snail Pastry With No Snail in It",
+    "description": "In Paris you ask for a pain au chocolat. Drive down to Toulouse and the exact same pastry is a chocolatine, and people there have real feelings about the difference. In this episode I talk about the names’ differences and origin, and how I ended up eating a snail pastry.",
+    "date": "2026-08-14T16:57:14.000Z",
+    "dateLabel": "Aug 14, 2026",
+    "durationSeconds": 1764,
+    "duration": "29:24",
+    "minutes": "29 min",
+    "audioUrl": "https://anchor.fm/s/114e11cd8/podcast/play/124206102/https%3A%2F%2Fd3ctxlq1ktw2nl.cloudfront.net%2Fstaging%2F2026-7-14%2Fcb824509-764f-0a57-7ee9-ab419cd9fe32.mp3",
+    "pageUrl": "https://podcasters.spotify.com/pod/show/french-curiosity/episodes/The-French-Snail-Pastry-With-No-Snail-in-It-e3ncvim",
+    "number": 9,
+    "image": "https://d3t3ozftmdmh3i.cloudfront.net/staging/podcast_uploaded_episode/46352646/46352646-1786685406341-5052ebf774d3e.jpg",
+    "imageFile": "a3c17a4b23bc.jpg"
   },
   "episodes": [
+    {
+      "title": "The French Snail Pastry With No Snail in It",
+      "description": "In Paris you ask for a pain au chocolat. Drive down to Toulouse and the exact same pastry is a chocolatine, and people there have real feelings about the difference. In this episode I talk about the names’ differences and origin, and how I ended up eating a snail pastry.",
+      "date": "2026-08-14T16:57:14.000Z",
+      "dateLabel": "Aug 14, 2026",
+      "durationSeconds": 1764,
+      "duration": "29:24",
+      "minutes": "29 min",
+      "audioUrl": "https://anchor.fm/s/114e11cd8/podcast/play/124206102/https%3A%2F%2Fd3ctxlq1ktw2nl.cloudfront.net%2Fstaging%2F2026-7-14%2Fcb824509-764f-0a57-7ee9-ab419cd9fe32.mp3",
+      "pageUrl": "https://podcasters.spotify.com/pod/show/french-curiosity/episodes/The-French-Snail-Pastry-With-No-Snail-in-It-e3ncvim",
+      "number": 9,
+      "image": "https://d3t3ozftmdmh3i.cloudfront.net/staging/podcast_uploaded_episode/46352646/46352646-1786685406341-5052ebf774d3e.jpg",
+      "imageFile": "a3c17a4b23bc.jpg"
+    },
     {
       "title": "Why Do the French Still Smoke So Much?",
       "description": "Every time I'm in France I notice it. Smoke on every terrace, smoke coming through the restaurant window, a lot more than I'm used to in the US. This episode I finally looked into it. Why?",
@@ -134,5 +148,5 @@
       "imageFile": "c4a72e6fabe6.jpg"
     }
   ],
-  "fetchedAt": "2026-08-08T09:45:16.173Z"
+  "fetchedAt": "2026-08-15T09:32:11.019Z"
 }
