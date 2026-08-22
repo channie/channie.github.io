@@ -7,20 +7,34 @@
     "imageFile": "26f73b394802.jpg"
   },
   "latest": {
-    "title": "The French Snail Pastry With No Snail in It",
-    "description": "In Paris you ask for a pain au chocolat. Drive down to Toulouse and the exact same pastry is a chocolatine, and people there have real feelings about the difference. In this episode I talk about the names’ differences and origin, and how I ended up eating a snail pastry.",
-    "date": "2026-08-14T16:57:14.000Z",
-    "dateLabel": "Aug 14, 2026",
-    "durationSeconds": 1764,
-    "duration": "29:24",
-    "minutes": "29 min",
-    "audioUrl": "https://anchor.fm/s/114e11cd8/podcast/play/124206102/https%3A%2F%2Fd3ctxlq1ktw2nl.cloudfront.net%2Fstaging%2F2026-7-14%2Fcb824509-764f-0a57-7ee9-ab419cd9fe32.mp3",
-    "pageUrl": "https://podcasters.spotify.com/pod/show/french-curiosity/episodes/The-French-Snail-Pastry-With-No-Snail-in-It-e3ncvim",
-    "number": 9,
-    "image": "https://d3t3ozftmdmh3i.cloudfront.net/staging/podcast_uploaded_episode/46352646/46352646-1786685406341-5052ebf774d3e.jpg",
-    "imageFile": "a3c17a4b23bc.jpg"
+    "title": "Complimented, or Roasted? Decoding French Humor",
+    "description": "The French might be some of the funniest people in the world, and half the time the rest of us can't even tell. The wink never comes. This episode is me learning how much of what I'd read as rude, or maybe flirtatious, was actually a joke sailing right past me.",
+    "date": "2026-08-21T20:07:00.000Z",
+    "dateLabel": "Aug 21, 2026",
+    "durationSeconds": 2279,
+    "duration": "37:59",
+    "minutes": "38 min",
+    "audioUrl": "https://anchor.fm/s/114e11cd8/podcast/play/124458113/https%3A%2F%2Fd3ctxlq1ktw2nl.cloudfront.net%2Fstaging%2F2026-7-19%2F49e6a1dc-5a82-2063-ccf1-79fe026ea765.mp3",
+    "pageUrl": "https://podcasters.spotify.com/pod/show/french-curiosity/episodes/Complimented--or-Roasted--Decoding-French-Humor-e3nklm1",
+    "number": 10,
+    "image": "https://d3t3ozftmdmh3i.cloudfront.net/staging/podcast_uploaded_episode/46352646/46352646-1787173683309-db117387842aa.jpg",
+    "imageFile": "78dc6bfa12e9.jpg"
   },
   "episodes": [
+    {
+      "title": "Complimented, or Roasted? Decoding French Humor",
+      "description": "The French might be some of the funniest people in the world, and half the time the rest of us can't even tell. The wink never comes. This episode is me learning how much of what I'd read as rude, or maybe flirtatious, was actually a joke sailing right past me.",
+      "date": "2026-08-21T20:07:00.000Z",
+      "dateLabel": "Aug 21, 2026",
+      "durationSeconds": 2279,
+      "duration": "37:59",
+      "minutes": "38 min",
+      "audioUrl": "https://anchor.fm/s/114e11cd8/podcast/play/124458113/https%3A%2F%2Fd3ctxlq1ktw2nl.cloudfront.net%2Fstaging%2F2026-7-19%2F49e6a1dc-5a82-2063-ccf1-79fe026ea765.mp3",
+      "pageUrl": "https://podcasters.spotify.com/pod/show/french-curiosity/episodes/Complimented--or-Roasted--Decoding-French-Humor-e3nklm1",
+      "number": 10,
+      "image": "https://d3t3ozftmdmh3i.cloudfront.net/staging/podcast_uploaded_episode/46352646/46352646-1787173683309-db117387842aa.jpg",
+      "imageFile": "78dc6bfa12e9.jpg"
+    },
     {
       "title": "The French Snail Pastry With No Snail in It",
       "description": "In Paris you ask for a pain au chocolat. Drive down to Toulouse and the exact same pastry is a chocolatine, and people there have real feelings about the difference. In this episode I talk about the names’ differences and origin, and how I ended up eating a snail pastry.",
@@ -148,5 +162,5 @@
       "imageFile": "c4a72e6fabe6.jpg"
     }
   ],
-  "fetchedAt": "2026-08-15T09:32:11.019Z"
+  "fetchedAt": "2026-08-22T09:33:24.809Z"
 }
