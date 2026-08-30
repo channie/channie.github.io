@@ -7,20 +7,34 @@
     "imageFile": "26f73b394802.jpg"
   },
   "latest": {
-    "title": "Complimented, or Roasted? Decoding French Humor",
-    "description": "The French might be some of the funniest people in the world, and half the time the rest of us can't even tell. The wink never comes. This episode is me learning how much of what I'd read as rude, or maybe flirtatious, was actually a joke sailing right past me.",
-    "date": "2026-08-21T20:07:00.000Z",
-    "dateLabel": "Aug 21, 2026",
-    "durationSeconds": 2279,
-    "duration": "37:59",
-    "minutes": "38 min",
-    "audioUrl": "https://anchor.fm/s/114e11cd8/podcast/play/124458113/https%3A%2F%2Fd3ctxlq1ktw2nl.cloudfront.net%2Fstaging%2F2026-7-19%2F49e6a1dc-5a82-2063-ccf1-79fe026ea765.mp3",
-    "pageUrl": "https://podcasters.spotify.com/pod/show/french-curiosity/episodes/Complimented--or-Roasted--Decoding-French-Humor-e3nklm1",
-    "number": 10,
-    "image": "https://d3t3ozftmdmh3i.cloudfront.net/staging/podcast_uploaded_episode/46352646/46352646-1787173683309-db117387842aa.jpg",
-    "imageFile": "78dc6bfa12e9.jpg"
+    "title": "Are Chinese Speakers Better at French Pronunciation?",
+    "description": "Someone on YouTube has a theory: Mandarin Chinese speakers are better at French pronunciation... unless they also speak English. Quite the emotional roller coaster for me, in about five seconds. I went up so high, because I speak Mandarin. And then I was dropped to the bottom, because I speak English too. So this episode is me checking the theory against the actual research. Turns out some of it is really true.",
+    "date": "2026-08-28T21:02:39.000Z",
+    "dateLabel": "Aug 28, 2026",
+    "durationSeconds": 1622,
+    "duration": "27:02",
+    "minutes": "27 min",
+    "audioUrl": "https://anchor.fm/s/114e11cd8/podcast/play/124877354/https%3A%2F%2Fd3ctxlq1ktw2nl.cloudfront.net%2Fstaging%2F2026-7-28%2F3930f0c8-83f2-e1d1-57b1-a62ca3147abb.mp3",
+    "pageUrl": "https://podcasters.spotify.com/pod/show/french-curiosity/episodes/Are-Chinese-Speakers-Better-at-French-Pronunciation-e3o1f3a",
+    "number": 11,
+    "image": "https://d3t3ozftmdmh3i.cloudfront.net/staging/podcast_uploaded_episode/46352646/46352646-1787950696666-35811953cabf4.jpg",
+    "imageFile": "b2731e2b0732.jpg"
   },
   "episodes": [
+    {
+      "title": "Are Chinese Speakers Better at French Pronunciation?",
+      "description": "Someone on YouTube has a theory: Mandarin Chinese speakers are better at French pronunciation... unless they also speak English. Quite the emotional roller coaster for me, in about five seconds. I went up so high, because I speak Mandarin. And then I was dropped to the bottom, because I speak English too. So this episode is me checking the theory against the actual research. Turns out some of it is really true.",
+      "date": "2026-08-28T21:02:39.000Z",
+      "dateLabel": "Aug 28, 2026",
+      "durationSeconds": 1622,
+      "duration": "27:02",
+      "minutes": "27 min",
+      "audioUrl": "https://anchor.fm/s/114e11cd8/podcast/play/124877354/https%3A%2F%2Fd3ctxlq1ktw2nl.cloudfront.net%2Fstaging%2F2026-7-28%2F3930f0c8-83f2-e1d1-57b1-a62ca3147abb.mp3",
+      "pageUrl": "https://podcasters.spotify.com/pod/show/french-curiosity/episodes/Are-Chinese-Speakers-Better-at-French-Pronunciation-e3o1f3a",
+      "number": 11,
+      "image": "https://d3t3ozftmdmh3i.cloudfront.net/staging/podcast_uploaded_episode/46352646/46352646-1787950696666-35811953cabf4.jpg",
+      "imageFile": "b2731e2b0732.jpg"
+    },
     {
       "title": "Complimented, or Roasted? Decoding French Humor",
       "description": "The French might be some of the funniest people in the world, and half the time the rest of us can't even tell. The wink never comes. This episode is me learning how much of what I'd read as rude, or maybe flirtatious, was actually a joke sailing right past me.",
@@ -162,5 +176,5 @@
       "imageFile": "c4a72e6fabe6.jpg"
     }
   ],
-  "fetchedAt": "2026-08-22T09:33:24.809Z"
+  "fetchedAt": "2026-08-30T14:22:36.058Z"
 }
