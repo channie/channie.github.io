@@ -36,20 +36,23 @@ const href = (id: string) => `/experimenting/${slugOf(id)}/`;
 
   {
     featured && (
-      <a class="artfeat" href={href(featured.id)}>
-        <div class="afimg">
-          {featured.data.hero ? (
+      <a class:list={['artfeat', { 'no-hero': !featured.data.hero }]} href={href(featured.id)} aria-label={featured.data.title}>
+        {featured.data.hero && (
+          <div class="afimg">
             <Image src={featured.data.hero} alt="" widths={[480, 720, 960]} sizes="(min-width:600px) 50vw, 90vw" />
-          ) : (
-            <span class="tile" data-cat={featured.data.category} />
-          )}
-        </div>
+          </div>
+        )}
         <div class="afbody">
-          <p class="ameta">
-            <span class="acat">{featured.data.category}</span>
-            <span class="adot">·</span><time datetime={featured.data.date.toISOString()}>{fmt(featured.data.date)}</time>
-            {featured.data.read && (<><span class="adot">·</span>{featured.data.read} read</>)}
-          </p>
+          <div class="afhead">
+            {!featured.data.hero && (
+              <span class="afeatured"><span class="star">✦</span> Featured</span>
+            )}
+            <p class="ameta">
+              <span class="acat">{featured.data.category}</span>
+              <span class="adot">·</span><time datetime={featured.data.date.toISOString()}>{fmt(featured.data.date)}</time>
+              {featured.data.read && (<><span class="adot">·</span>{featured.data.read} read</>)}
+            </p>
+          </div>
           <h2 class="atitle">{featured.data.title}</h2>
           <p class="aexc">{featured.data.excerpt}</p>
           <ArrowLink as="span">Read the note</ArrowLink>
@@ -60,8 +63,8 @@ const href = (id: string) => `/experimenting/${slugOf(id)}/`;
 
   <div class="artlist">
     {
-      rest.map((e) => (
-        <a class="artrow" href={href(e.id)}>
+      rest.map((e, i) => (
+        <a class:list={['artrow', { 'img-left': i % 2 === 1 }]} href={href(e.id)} aria-label={e.data.title}>
           <div class="arbody">
             <p class="ameta">
               <span class="acat">{e.data.category}</span>
@@ -70,6 +73,7 @@ const href = (id: string) => `/experimenting/${slugOf(id)}/`;
             </p>
             <h3 class="artitle">{e.data.title}</h3>
             <p class="aexc row">{e.data.excerpt}</p>
+            <ArrowLink as="span" class="rowcta">Read the note</ArrowLink>
           </div>
           <div class="arthumb">
             {e.data.hero ? (
@@ -145,6 +149,56 @@ const href = (id: string) => `/experimenting/${slugOf(id)}/`;
     padding-bottom: 30px;
     border-bottom: 1px solid var(--line);
   }
+  /* ✦ Featured marker — stands in for the photo as the "this is featured" cue */
+  .afeatured {
+    font-family: var(--font-sans);
+    color: var(--accent);
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: var(--tracking-eyebrow);
+    font-size: var(--text-xs);
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    white-space: nowrap;
+  }
+  .afeatured .star {
+    color: var(--accent2);
+  }
+
+  /* no hero image -> a framed "cover" panel: the card surface + hairline and
+     accent top-rule mark it as featured in place of the photo, and the text
+     runs full content width inside the frame */
+  .artfeat.no-hero {
+    grid-template-columns: 1fr;
+    margin: 8px var(--gutter) 6px;
+    padding: 24px var(--space-6);
+    border: 1px solid var(--line);
+    border-top: 3px solid var(--accent);
+    border-radius: var(--radius-card);
+    background: var(--card);
+  }
+  .artfeat.no-hero .afbody {
+    justify-content: flex-start;
+  }
+  .artfeat.no-hero .afhead {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    flex-wrap: wrap;
+  }
+  .artfeat.no-hero .atitle {
+    font-size: var(--text-4xl);
+    max-width: 24ch;
+    transition: color 0.2s var(--ease);
+  }
+  .artfeat.no-hero .aexc {
+    max-width: 64ch;
+  }
+  .artfeat.no-hero:hover .atitle {
+    color: var(--accent);
+  }
   .afimg {
     overflow: hidden;
     border-radius: var(--radius-media);
@@ -204,8 +258,25 @@ const href = (id: string) => `/experimenting/${slugOf(id)}/`;
   .artrow:hover .artitle {
     color: var(--accent);
   }
+  /* interleave the thumbnail side down the list (even rows keep it on the
+     right, odd rows flip it left) so the column doesn't march in a straight line */
+  .artrow.img-left {
+    grid-template-columns: 96px 1fr;
+  }
+  .artrow.img-left .arthumb {
+    order: -1;
+  }
   .aexc.row {
     display: none;
+  }
+  /* per-row "Read the note →" cue (a styled span — the whole row is the link,
+     so it can't nest an <a>); matches the featured card. Arrow nudges on row
+     hover, and it stays visible on mobile where the excerpt is hidden. */
+  .arbody :global(.rowcta) {
+    margin-top: 2px;
+  }
+  .artrow:hover :global(.rowcta .arw) {
+    transform: translateX(5px);
   }
   .arthumb {
     overflow: hidden;
@@ -224,6 +295,11 @@ const href = (id: string) => `/experimenting/${slugOf(id)}/`;
       margin: 14px var(--gutter) 8px;
       padding-bottom: var(--space-12);
     }
+    /* roomier frame on wider viewports */
+    .artfeat.no-hero {
+      margin: 16px var(--gutter) 8px;
+      padding: 30px 34px;
+    }
     .afimg {
       height: 320px;
     }
@@ -234,6 +310,9 @@ const href = (id: string) => `/experimenting/${slugOf(id)}/`;
       grid-template-columns: 1fr 200px;
       gap: 36px;
       padding: 32px 0;
+    }
+    .artrow.img-left {
+      grid-template-columns: 200px 1fr;
     }
     .aexc.row {
       display: block;
@@ -256,6 +335,9 @@ const href = (id: string) => `/experimenting/${slugOf(id)}/`;
       grid-template-columns: 1fr 220px;
       gap: var(--space-10);
       padding: 34px 0;
+    }
+    .artrow.img-left {
+      grid-template-columns: 220px 1fr;
     }
     .arthumb {
       height: 132px;

@@ -45,12 +45,25 @@ const experiments = defineCollection({
         read: z.string().optional(),
         /** hero image: a co-located `./file` (or a shared `../../../assets/...`) */
         hero: image().optional(),
+        /** motion hero: a short silent looping clip served from `public/` (mp4),
+            shown on the POST via <VideoLoop> with `hero` as its poster — so it's
+            pausable, honours prefers-reduced-motion, and reserves its space. The
+            Experimenting featured card shows the still poster (`hero`), not the
+            clip. Absolute path, e.g. "/video/foo.mp4". Requires `hero` (poster). */
+        heroVideo: z.string().optional(),
         /** hero display width in px (default 460; 160–720) */
         heroWidth: z.number().int().min(160).max(720).optional(),
         /** hero alt text. Set it when the hero conveys information (a
             screenshot, a diagram); omit for a purely atmospheric image and
             it renders decorative (alt=""). */
         heroAlt: z.string().optional(),
+        /** per-post Open Graph / social-card image: absolute `public` path to a
+            1200×630 PNG (GIFs don't render as social cards). Overrides the site
+            default /og/default.png. */
+        ogImage: z.string().optional(),
+        /** alt text for the OG / social-card image, for screen readers that
+            announce shared links. Falls back to the site name. */
+        ogImageAlt: z.string().optional(),
         /** Presentation. 'standard' is the default single-column post.
             'feature' opts into the magazine feature layout (full-bleed
             masthead, narrow measure, drop cap, breakout figures).

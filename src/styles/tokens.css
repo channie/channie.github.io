@@ -75,6 +75,9 @@
   --muted: rgba(42, 32, 26, 0.72);   /* secondary text */
   --accent: #b92a0f;      /* carnelian — links, eyebrows, labels */
   --accent2: #e0833a;     /* rajah — highlights, quote marks, focus ring */
+  --kept: #6f7d3f;        /* moss — the palette's one "positive" hue (the
+                             Experimenting "kept / grounded" card). Constant
+                             across themes; its tints derive from --ink/--line. */
   --band: #a8350f;        /* terracotta band (podcast band / footer) */
   --band-ink: #f7e4cc;    /* cream text on band */
   --band-muted: rgba(247, 228, 204, 0.90); /* muted on band */

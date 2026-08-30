@@ -3,6 +3,7 @@ import { getCollection, render } from 'astro:content';
 import { Image } from 'astro:assets';
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import FeatureArticle from '../../layouts/FeatureArticle.astro';
+import VideoLoop from '../../components/feature/VideoLoop.astro';
 
 export async function getStaticPaths() {
   const entries = await getCollection('experiments', ({ data }) => !data.draft);
@@ -36,6 +37,8 @@ const fmt = (d: Date) =>
   description={entry.data.excerpt}
   ogType="article"
   publishedTime={entry.data.date.toISOString()}
+  ogImage={entry.data.ogImage}
+  ogImageAlt={entry.data.ogImageAlt}
 >
   {isFeature ? (
     <FeatureArticle entry={entry}>
@@ -53,13 +56,27 @@ const fmt = (d: Date) =>
     <h1>{entry.data.title}</h1>
 
     {
-      entry.data.hero && (
+      entry.data.heroVideo && entry.data.hero ? (
+        <div
+          class="post-hero"
+          style={`--hero-w: ${heroW}px; --hero-aspect: ${entry.data.hero.width} / ${entry.data.hero.height}`}
+        >
+          {/* motion hero: <VideoLoop> is a pausable, muted loop that does NOT
+              autoplay under prefers-reduced-motion and pauses off screen; the
+              poster (hero) reserves the space so there's no layout shift. */}
+          <VideoLoop
+            src={entry.data.heroVideo}
+            poster={entry.data.hero}
+            label={entry.data.heroAlt ?? entry.data.title}
+          />
+        </div>
+      ) : entry.data.hero ? (
         <div class="post-hero" style={`--hero-w: ${heroW}px`}>
           {/* widths/sizes track the display cap so we never ship oversized pixels.
               alt: heroAlt when the image is informational, else decorative. */}
           <Image src={entry.data.hero} alt={entry.data.heroAlt ?? ''} widths={[heroW, heroW * 2]} sizes={`min(92vw, ${heroW}px)`} />
         </div>
-      )
+      ) : null
     }
 
     <div class="prose">
@@ -122,6 +139,11 @@ const fmt = (d: Date) =>
     width: 100%;
     height: auto;
     display: block;
+  }
+  /* reserve the motion hero's space from the poster's ratio so it doesn't
+     shift as the clip loads (the <VideoLoop> video is width:100%/height:auto) */
+  .post-hero :global(video) {
+    aspect-ratio: var(--hero-aspect);
   }
   .prose {
     margin-top: 28px;
@@ -227,5 +249,154 @@ const fmt = (d: Date) =>
     font-size: var(--text-xl);
     line-height: 1.4;
     color: var(--ink);
+  }
+
+  /* ── "Getting Out of the Loop" post: highlights, tables, kept/dropped
+        cards, eval staircase, asterism, footnote. Styled with tokens so it
+        tracks the site's themes; scoped to injected .prose via :global. ── */
+  .prose :global(mark) {
+    color: inherit;
+    font-weight: 700;
+    background: linear-gradient(
+        color-mix(in srgb, var(--accent2) 34%, transparent),
+        color-mix(in srgb, var(--accent2) 34%, transparent)
+      ) no-repeat 0 88% / 100% 42%;
+    -webkit-box-decoration-break: clone;
+    box-decoration-break: clone;
+    padding: 0 0.04em;
+  }
+
+  /* tables */
+  .prose :global(.tbl) { overflow-x: auto; margin: 1.15em 0; }
+  .prose :global(table) {
+    border-collapse: collapse;
+    width: 100%;
+    font-family: var(--font-sans);
+    font-size: 0.94em;
+  }
+  .prose :global(th),
+  .prose :global(td) {
+    border: 1px solid var(--line);
+    padding: 8px 12px;
+    text-align: left;
+    vertical-align: top;
+    line-height: 1.5;
+  }
+  .prose :global(thead th) { background: var(--card); font-weight: 700; }
+  .prose :global(table.cmp) { table-layout: fixed; }
+  .prose :global(table.cmp th:nth-child(1)),
+  .prose :global(table.cmp td:nth-child(1)) { width: 30%; }
+  .prose :global(table.cmp th:nth-child(2)),
+  .prose :global(table.cmp td:nth-child(2)) { width: 16%; }
+  .prose :global(table.cmp th:nth-child(3)),
+  .prose :global(table.cmp td:nth-child(3)) { width: 54%; }
+  .prose :global(.becomes) {
+    text-align: center;
+    color: var(--accent);
+    font-weight: 700;
+    font-size: 1.1em;
+    margin: 0.2em 0 0.1em;
+  }
+
+  /* kept / dropped cards */
+  .prose :global(.kd) { display: flex; flex-wrap: wrap; gap: 12px; margin: 0.4em 0 1em; }
+  .prose :global(.kd .card) {
+    flex: 1 1 240px;
+    border: 1px solid var(--line);
+    border-radius: var(--radius-media);
+    padding: 14px 16px;
+    background: var(--card);
+  }
+  .prose :global(.kd .tag) {
+    display: inline-block;
+    font-family: var(--font-sans);
+    font-size: var(--text-2xs);
+    font-weight: 700;
+    letter-spacing: var(--tracking-eyebrow-tight);
+    text-transform: uppercase;
+    padding: 2px 9px;
+    border-radius: var(--radius-pill);
+    margin-bottom: 9px;
+    background: color-mix(in srgb, var(--ink) 8%, transparent);
+    color: var(--muted);
+  }
+  /* KEPT = grounded/positive → moss (--kept); DROPPED = flagged → rajah */
+  .prose :global(.kd .kept) { border-color: color-mix(in srgb, var(--kept) 48%, var(--line)); }
+  .prose :global(.kd .kept .tag) {
+    background: color-mix(in srgb, var(--kept) 20%, transparent);
+    color: color-mix(in srgb, var(--kept) 72%, var(--ink));
+  }
+  .prose :global(.kd .dropped) { border-color: color-mix(in srgb, var(--accent2) 55%, var(--line)); }
+  .prose :global(.kd .dropped .tag) {
+    background: color-mix(in srgb, var(--accent2) 22%, transparent);
+    color: color-mix(in srgb, var(--accent) 88%, var(--ink));
+  }
+  .prose :global(.kd .claim) { font-size: 0.95em; line-height: 1.5; }
+  .prose :global(.kd .gloss) { display: block; color: var(--muted); font-style: italic; margin-top: 6px; }
+  .prose :global(.kd .why) { font-size: 0.82em; color: var(--muted); margin-top: 9px; }
+
+  /* eval staircase */
+  .prose :global(.stairA) { display: flex; flex-direction: column; gap: 10px; margin: 1.4em 0; }
+  .prose :global(.stairA .step) {
+    border: 1px solid var(--line);
+    border-left-width: 4px;
+    border-radius: var(--radius-media);
+    padding: 11px 14px;
+    background: var(--card);
+  }
+  .prose :global(.stairA .s1) { margin-left: 0; border-left-color: color-mix(in srgb, var(--ink) 34%, var(--line)); }
+  .prose :global(.stairA .s2) { margin-left: 40px; border-left-color: var(--accent2); }
+  .prose :global(.stairA .s3) { margin-left: 80px; border-left-color: var(--accent); }
+  .prose :global(.stairA .row) { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+  .prose :global(.stairA .cost) {
+    font-family: var(--font-sans);
+    font-size: var(--text-2xs);
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: var(--tracking-eyebrow-tight);
+    padding: 2px 9px;
+    border-radius: var(--radius-pill);
+    white-space: nowrap;
+  }
+  .prose :global(.stairA .c-free) { background: color-mix(in srgb, var(--ink) 10%, transparent); color: var(--muted); }
+  .prose :global(.stairA .c-cheap) { background: color-mix(in srgb, var(--accent2) 22%, transparent); color: color-mix(in srgb, var(--accent) 88%, var(--ink)); }
+  /* text darkened toward ink (like .c-cheap) so the $$ pill clears WCAG AA on
+     its own tint; pure --accent here measured 4.42:1 */
+  .prose :global(.stairA .c-dear) { background: color-mix(in srgb, var(--accent) 15%, transparent); color: color-mix(in srgb, var(--accent) 88%, var(--ink)); }
+  .prose :global(.stairA .name) { font-weight: 700; }
+  .prose :global(.stairA .desc) { font-size: 0.86em; color: var(--muted); margin-top: 3px; }
+  @media (max-width: 560px) {
+    .prose :global(.stairA .s2) { margin-left: 20px; }
+    .prose :global(.stairA .s3) { margin-left: 40px; }
+  }
+
+  /* asterism section break */
+  .prose :global(.brk-dots) { display: flex; justify-content: center; gap: 14px; margin: 2.6em 0; }
+  .prose :global(.brk-dots span) { width: 5px; height: 5px; border-radius: 50%; background: var(--accent2); display: block; }
+
+  /* footnote */
+  .prose :global(.fnref) { color: var(--accent); font-weight: 700; font-size: 0.85em; }
+  .prose :global(.fn) {
+    font-family: var(--font-sans);
+    font-size: var(--text-sm);
+    line-height: 1.6;
+    color: var(--muted);
+    margin-top: 1.6em;
+    padding-top: 0.9em;
+    border-top: 1px solid var(--line);
+  }
+  .prose :global(.fn .fnmark) { color: var(--accent); font-weight: 700; margin-right: 0.3em; }
+  /* footnote marker links (ref <-> note): keep the bare-marker look, not the
+     underlined body-link style; underline only on hover/focus */
+  .prose :global(.fnref a),
+  .prose :global(a.fnmark) {
+    color: var(--accent);
+    text-decoration: none;
+  }
+  .prose :global(.fnref a:hover),
+  .prose :global(a.fnmark:hover),
+  .prose :global(.fnref a:focus-visible),
+  .prose :global(a.fnmark:focus-visible) {
+    text-decoration: underline;
   }
 </style>

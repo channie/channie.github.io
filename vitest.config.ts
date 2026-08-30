@@ -6,6 +6,10 @@ import { defineConfig } from 'vitest/config';
 export default defineConfig({
   test: {
     environment: 'node',
-    include: ['src/**/*.test.ts', 'tests/**/*.test.{ts,mjs}'],
+    // scripts/**/*.test.ts covers private-only tests for the publisher machinery
+    // (public-manifest / publish / check-public-snapshot), which is never
+    // published — so those tests must not live under the published tests/ dir.
+    // In the public repo this glob simply matches nothing.
+    include: ['src/**/*.test.ts', 'tests/**/*.test.{ts,mjs}', 'scripts/**/*.test.ts'],
   },
 });
