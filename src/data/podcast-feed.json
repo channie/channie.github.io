@@ -7,20 +7,34 @@
     "imageFile": "26f73b394802.jpg"
   },
   "latest": {
-    "title": "Are Chinese Speakers Better at French Pronunciation?",
-    "description": "Someone on YouTube has a theory: Mandarin Chinese speakers are better at French pronunciation... unless they also speak English. Quite the emotional roller coaster for me, in about five seconds. I went up so high, because I speak Mandarin. And then I was dropped to the bottom, because I speak English too. So this episode is me checking the theory against the actual research. Turns out some of it is really true.",
-    "date": "2026-08-28T21:02:39.000Z",
-    "dateLabel": "Aug 28, 2026",
-    "durationSeconds": 1622,
-    "duration": "27:02",
-    "minutes": "27 min",
-    "audioUrl": "https://anchor.fm/s/114e11cd8/podcast/play/124877354/https%3A%2F%2Fd3ctxlq1ktw2nl.cloudfront.net%2Fstaging%2F2026-7-28%2F3930f0c8-83f2-e1d1-57b1-a62ca3147abb.mp3",
-    "pageUrl": "https://podcasters.spotify.com/pod/show/french-curiosity/episodes/Are-Chinese-Speakers-Better-at-French-Pronunciation-e3o1f3a",
-    "number": 11,
-    "image": "https://d3t3ozftmdmh3i.cloudfront.net/staging/podcast_uploaded_episode/46352646/46352646-1787950696666-35811953cabf4.jpg",
-    "imageFile": "b2731e2b0732.jpg"
+    "title": "The Philosophy the French Learn in School",
+    "description": "Can you be happy when other people are not? This past June, more than five hundred thousand French eighteen-year-olds opened an envelope with that question inside, and got four hours to answer it in writing. Philosophy is mandatory in French high school, and I've wondered for a long time what they actually learn in there. So I dug in, and then went one step further: I took this year's exam myself, cold, and had it graded the French way.",
+    "date": "2026-09-11T20:41:35.000Z",
+    "dateLabel": "Sep 11, 2026",
+    "durationSeconds": 2691,
+    "duration": "44:51",
+    "minutes": "45 min",
+    "audioUrl": "https://anchor.fm/s/114e11cd8/podcast/play/125611093/https%3A%2F%2Fd3ctxlq1ktw2nl.cloudfront.net%2Fstaging%2F2026-8-11%2Ffe1344c8-1e5f-5d87-6bf2-75285c2dd4a8.mp3",
+    "pageUrl": "https://podcasters.spotify.com/pod/show/french-curiosity/episodes/The-Philosophy-the-French-Learn-in-School-e3onrkl",
+    "number": 12,
+    "image": "https://d3t3ozftmdmh3i.cloudfront.net/staging/podcast_uploaded_episode/46352646/46352646-1789159246910-4bea1347418f4.jpg",
+    "imageFile": "56e3b8074125.jpg"
   },
   "episodes": [
+    {
+      "title": "The Philosophy the French Learn in School",
+      "description": "Can you be happy when other people are not? This past June, more than five hundred thousand French eighteen-year-olds opened an envelope with that question inside, and got four hours to answer it in writing. Philosophy is mandatory in French high school, and I've wondered for a long time what they actually learn in there. So I dug in, and then went one step further: I took this year's exam myself, cold, and had it graded the French way.",
+      "date": "2026-09-11T20:41:35.000Z",
+      "dateLabel": "Sep 11, 2026",
+      "durationSeconds": 2691,
+      "duration": "44:51",
+      "minutes": "45 min",
+      "audioUrl": "https://anchor.fm/s/114e11cd8/podcast/play/125611093/https%3A%2F%2Fd3ctxlq1ktw2nl.cloudfront.net%2Fstaging%2F2026-8-11%2Ffe1344c8-1e5f-5d87-6bf2-75285c2dd4a8.mp3",
+      "pageUrl": "https://podcasters.spotify.com/pod/show/french-curiosity/episodes/The-Philosophy-the-French-Learn-in-School-e3onrkl",
+      "number": 12,
+      "image": "https://d3t3ozftmdmh3i.cloudfront.net/staging/podcast_uploaded_episode/46352646/46352646-1789159246910-4bea1347418f4.jpg",
+      "imageFile": "56e3b8074125.jpg"
+    },
     {
       "title": "Are Chinese Speakers Better at French Pronunciation?",
       "description": "Someone on YouTube has a theory: Mandarin Chinese speakers are better at French pronunciation... unless they also speak English. Quite the emotional roller coaster for me, in about five seconds. I went up so high, because I speak Mandarin. And then I was dropped to the bottom, because I speak English too. So this episode is me checking the theory against the actual research. Turns out some of it is really true.",
@@ -176,5 +190,5 @@
       "imageFile": "c4a72e6fabe6.jpg"
     }
   ],
-  "fetchedAt": "2026-08-30T14:22:36.058Z"
+  "fetchedAt": "2026-09-12T12:47:28.979Z"
 }
