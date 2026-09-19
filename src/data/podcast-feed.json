@@ -7,20 +7,34 @@
     "imageFile": "26f73b394802.jpg"
   },
   "latest": {
-    "title": "The Philosophy the French Learn in School",
-    "description": "Can you be happy when other people are not? This past June, more than five hundred thousand French eighteen-year-olds opened an envelope with that question inside, and got four hours to answer it in writing. Philosophy is mandatory in French high school, and I've wondered for a long time what they actually learn in there. So I dug in, and then went one step further: I took this year's exam myself, cold, and had it graded the French way.",
-    "date": "2026-09-11T20:41:35.000Z",
-    "dateLabel": "Sep 11, 2026",
-    "durationSeconds": 2691,
-    "duration": "44:51",
-    "minutes": "45 min",
-    "audioUrl": "https://anchor.fm/s/114e11cd8/podcast/play/125611093/https%3A%2F%2Fd3ctxlq1ktw2nl.cloudfront.net%2Fstaging%2F2026-8-11%2Ffe1344c8-1e5f-5d87-6bf2-75285c2dd4a8.mp3",
-    "pageUrl": "https://podcasters.spotify.com/pod/show/french-curiosity/episodes/The-Philosophy-the-French-Learn-in-School-e3onrkl",
-    "number": 12,
-    "image": "https://d3t3ozftmdmh3i.cloudfront.net/staging/podcast_uploaded_episode/46352646/46352646-1789159246910-4bea1347418f4.jpg",
-    "imageFile": "56e3b8074125.jpg"
+    "title": "Why Does France Put a Rooster on Everything?",
+    "description": "What's up with the French rooster? I've seen it everywhere, on jerseys, on restaurant logos, in store names, but I was never taught what it means. This is a short episode about where the bird actually comes from, about the emperor who turned it down, and about the word cocorico, which French roosters say and French front pages shout. A short and light one.",
+    "date": "2026-09-19T00:17:48.000Z",
+    "dateLabel": "Sep 19, 2026",
+    "durationSeconds": 917,
+    "duration": "15:17",
+    "minutes": "15 min",
+    "audioUrl": "https://anchor.fm/s/114e11cd8/podcast/play/125971814/https%3A%2F%2Fd3ctxlq1ktw2nl.cloudfront.net%2Fstaging%2F2026-8-19%2F3bcc12a0-ba85-0f0d-5b58-467d0407321c.mp3",
+    "pageUrl": "https://podcasters.spotify.com/pod/show/french-curiosity/episodes/Why-Does-France-Put-a-Rooster-on-Everything-e3p2rt6",
+    "number": 13,
+    "image": "https://d3t3ozftmdmh3i.cloudfront.net/staging/podcast_uploaded_episode/46352646/46352646-1789776972074-93f91f97b94ca.jpg",
+    "imageFile": "3c37ab3f1cf4.jpg"
   },
   "episodes": [
+    {
+      "title": "Why Does France Put a Rooster on Everything?",
+      "description": "What's up with the French rooster? I've seen it everywhere, on jerseys, on restaurant logos, in store names, but I was never taught what it means. This is a short episode about where the bird actually comes from, about the emperor who turned it down, and about the word cocorico, which French roosters say and French front pages shout. A short and light one.",
+      "date": "2026-09-19T00:17:48.000Z",
+      "dateLabel": "Sep 19, 2026",
+      "durationSeconds": 917,
+      "duration": "15:17",
+      "minutes": "15 min",
+      "audioUrl": "https://anchor.fm/s/114e11cd8/podcast/play/125971814/https%3A%2F%2Fd3ctxlq1ktw2nl.cloudfront.net%2Fstaging%2F2026-8-19%2F3bcc12a0-ba85-0f0d-5b58-467d0407321c.mp3",
+      "pageUrl": "https://podcasters.spotify.com/pod/show/french-curiosity/episodes/Why-Does-France-Put-a-Rooster-on-Everything-e3p2rt6",
+      "number": 13,
+      "image": "https://d3t3ozftmdmh3i.cloudfront.net/staging/podcast_uploaded_episode/46352646/46352646-1789776972074-93f91f97b94ca.jpg",
+      "imageFile": "3c37ab3f1cf4.jpg"
+    },
     {
       "title": "The Philosophy the French Learn in School",
       "description": "Can you be happy when other people are not? This past June, more than five hundred thousand French eighteen-year-olds opened an envelope with that question inside, and got four hours to answer it in writing. Philosophy is mandatory in French high school, and I've wondered for a long time what they actually learn in there. So I dug in, and then went one step further: I took this year's exam myself, cold, and had it graded the French way.",
@@ -190,5 +204,5 @@
       "imageFile": "c4a72e6fabe6.jpg"
     }
   ],
-  "fetchedAt": "2026-09-12T12:47:28.979Z"
+  "fetchedAt": "2026-09-19T13:01:41.150Z"
 }
