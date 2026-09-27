@@ -7,20 +7,34 @@
     "imageFile": "26f73b394802.jpg"
   },
   "latest": {
-    "title": "Why Does France Put a Rooster on Everything?",
-    "description": "What's up with the French rooster? I've seen it everywhere, on jerseys, on restaurant logos, in store names, but I was never taught what it means. This is a short episode about where the bird actually comes from, about the emperor who turned it down, and about the word cocorico, which French roosters say and French front pages shout. A short and light one.",
-    "date": "2026-09-19T00:17:48.000Z",
-    "dateLabel": "Sep 19, 2026",
-    "durationSeconds": 917,
-    "duration": "15:17",
-    "minutes": "15 min",
-    "audioUrl": "https://anchor.fm/s/114e11cd8/podcast/play/125971814/https%3A%2F%2Fd3ctxlq1ktw2nl.cloudfront.net%2Fstaging%2F2026-8-19%2F3bcc12a0-ba85-0f0d-5b58-467d0407321c.mp3",
-    "pageUrl": "https://podcasters.spotify.com/pod/show/french-curiosity/episodes/Why-Does-France-Put-a-Rooster-on-Everything-e3p2rt6",
-    "number": 13,
-    "image": "https://d3t3ozftmdmh3i.cloudfront.net/staging/podcast_uploaded_episode/46352646/46352646-1789776972074-93f91f97b94ca.jpg",
-    "imageFile": "3c37ab3f1cf4.jpg"
+    "title": "Why Are So Many French Book Covers Blank?",
+    "description": "I've seen these book covers all over France. Cream colored or white, basically blank, just a title and the author's name. For the longest time I assumed they were for really old classics. But that’s actually not true. This episode goes into why so many French books have blank looking covers.",
+    "date": "2026-09-27T02:22:17.000Z",
+    "dateLabel": "Sep 27, 2026",
+    "durationSeconds": 1498,
+    "duration": "24:58",
+    "minutes": "25 min",
+    "audioUrl": "https://anchor.fm/s/114e11cd8/podcast/play/126355436/https%3A%2F%2Fd3ctxlq1ktw2nl.cloudfront.net%2Fstaging%2F2026-8-27%2F5529c7da-f342-6231-1e24-12c0323a4338.mp3",
+    "pageUrl": "https://podcasters.spotify.com/pod/show/french-curiosity/episodes/Why-Are-So-Many-French-Book-Covers-Blank-e3peihc",
+    "number": 14,
+    "image": "https://d3t3ozftmdmh3i.cloudfront.net/staging/podcast_uploaded_episode/46352646/46352646-1790475632472-ce57c67bed5ee.jpg",
+    "imageFile": "15a8db45acfe.jpg"
   },
   "episodes": [
+    {
+      "title": "Why Are So Many French Book Covers Blank?",
+      "description": "I've seen these book covers all over France. Cream colored or white, basically blank, just a title and the author's name. For the longest time I assumed they were for really old classics. But that’s actually not true. This episode goes into why so many French books have blank looking covers.",
+      "date": "2026-09-27T02:22:17.000Z",
+      "dateLabel": "Sep 27, 2026",
+      "durationSeconds": 1498,
+      "duration": "24:58",
+      "minutes": "25 min",
+      "audioUrl": "https://anchor.fm/s/114e11cd8/podcast/play/126355436/https%3A%2F%2Fd3ctxlq1ktw2nl.cloudfront.net%2Fstaging%2F2026-8-27%2F5529c7da-f342-6231-1e24-12c0323a4338.mp3",
+      "pageUrl": "https://podcasters.spotify.com/pod/show/french-curiosity/episodes/Why-Are-So-Many-French-Book-Covers-Blank-e3peihc",
+      "number": 14,
+      "image": "https://d3t3ozftmdmh3i.cloudfront.net/staging/podcast_uploaded_episode/46352646/46352646-1790475632472-ce57c67bed5ee.jpg",
+      "imageFile": "15a8db45acfe.jpg"
+    },
     {
       "title": "Why Does France Put a Rooster on Everything?",
       "description": "What's up with the French rooster? I've seen it everywhere, on jerseys, on restaurant logos, in store names, but I was never taught what it means. This is a short episode about where the bird actually comes from, about the emperor who turned it down, and about the word cocorico, which French roosters say and French front pages shout. A short and light one.",
@@ -204,5 +218,5 @@
       "imageFile": "c4a72e6fabe6.jpg"
     }
   ],
-  "fetchedAt": "2026-09-19T13:01:41.150Z"
+  "fetchedAt": "2026-09-27T14:38:55.689Z"
 }
