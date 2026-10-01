@@ -62,6 +62,7 @@ for (const { book } of spreads) {
 }
 ---
 
+<div class="readflip">
 <div class="readstage" data-flip>
   <button type="button" class="flip-arrow" data-prev aria-label="Previous book">‹</button>
 
@@ -220,8 +221,20 @@ for (const { book } of spreads) {
     }
   </div>
 </div>
+</div>
 
 <style>
+  /* Full-width clip for the peeking neighbour covers. They sit partly
+     outside the deck by design, and between ~830px and ~1290px wide they
+     also ran past the WINDOW, so the whole page scrolled sideways (up to
+     57px). The clip has to be this full-width box, not .readstage (capped
+     at 1180px): on wider screens the peeks legitimately reach past the
+     stage into the page margin, and clipping there would cut them.
+     `clip` (unlike `hidden`) makes no scroll container and leaves the
+     vertical axis alone. */
+  .readflip {
+    overflow-x: clip;
+  }
   .readstage {
     position: relative;
     /* wider than the text column (--content-max) so the "book" has room to

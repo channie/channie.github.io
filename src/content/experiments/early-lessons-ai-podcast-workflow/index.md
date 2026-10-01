@@ -7,7 +7,6 @@ excerpt: Early notes from building an AI workflow for my French podcast — wher
 hero: ./agents-folder.png
 heroWidth: 300
 heroAlt: A code editor’s file tree showing an "agents" folder full of Python files — one per role, including cultural_consultant.py, fact_checker.py, draft_quality_reviewer.py, and scriptwriter.py.
-featured: true
 ---
 
 I am still early in building my AI podcast workflow for my podcast, *French, One Curiosity at a Time*.

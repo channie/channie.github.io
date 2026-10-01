@@ -250,6 +250,17 @@ const fmt = (d: Date) =>
     line-height: 1.4;
     color: var(--ink);
   }
+  /* a quote's paragraphs take the quote's type: without this, .prose p
+     sets them in the body sans (a rule aimed at the <p> itself always
+     beats what it would otherwise inherit from the blockquote) */
+  .prose :global(blockquote p) {
+    font: inherit;
+    color: inherit;
+    margin: 0 0 0.6em;
+  }
+  .prose :global(blockquote p:last-child) {
+    margin-bottom: 0;
+  }
 
   /* ── "Getting Out of the Loop" post: highlights, tables, kept/dropped
         cards, eval staircase, asterism, footnote. Styled with tokens so it
@@ -370,9 +381,7 @@ const fmt = (d: Date) =>
     .prose :global(.stairA .s3) { margin-left: 40px; }
   }
 
-  /* asterism section break */
-  .prose :global(.brk-dots) { display: flex; justify-content: center; gap: 14px; margin: 2.6em 0; }
-  .prose :global(.brk-dots span) { width: 5px; height: 5px; border-radius: 50%; background: var(--accent2); display: block; }
+  /* the asterism section break (.brk-dots) is a shared utility in global.css */
 
   /* footnote */
   .prose :global(.fnref) { color: var(--accent); font-weight: 700; font-size: 0.85em; }

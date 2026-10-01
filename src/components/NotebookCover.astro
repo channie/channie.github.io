@@ -1,0 +1,101 @@
+---
+/* ============================================================
+   NotebookCover — the stand-in cover for an Experimenting post that
+   has no image: a ruled notebook page with a margin rule in the accent
+   colour (carnelian red in Terracotta) and the post's category
+   handwritten on one of the lines.
+
+     <NotebookCover label={post.data.category} />
+
+   It fills whatever box it is placed in (the list's thumbnail sizes
+   it; in an unsized box it falls back to the thumbnail's 5:3) and
+   reads that box's width with a container query, so the same page
+   works at 96×96 on a phone and ~220×132 on desktop. A long label
+   wraps onto the next rule, because the handwriting's line-height IS
+   the rule pitch; a single word too long for the line breaks rather
+   than being clipped.
+
+   Decorative: the category is already in the row's meta line, so the
+   cover is aria-hidden.
+   ============================================================ */
+// --font-hand (Caveat) loads only where it is used. Importing it here
+// means any page that renders this cover gets the face; the browser only
+// downloads it when a cover is actually on the page.
+import '@fontsource-variable/caveat/index.css';
+
+interface Props {
+  /** the handwritten word(s), usually the post's category */
+  label: string;
+}
+const { label }: Props = Astro.props;
+---
+
+<div class="nbcover" aria-hidden="true">
+  <span class="margin"></span>
+  <span class="word">{label}</span>
+</div>
+
+<style>
+  .nbcover {
+    /* ruled-line pitch. The sizes below are tuned to the THUMBNAIL box
+       (container), not the viewport type scale, so they are raw px. */
+    --rule: 22px;
+    position: relative;
+    width: 100%;
+    height: 100%;
+    /* only applies when the parent gives no height (height:100% → auto);
+       the list's thumbnail boxes are sized, so there it never kicks in */
+    aspect-ratio: 5 / 3;
+    overflow: hidden;
+    container: nbcover / inline-size;
+    border-radius: inherit;
+    background-color: var(--card);
+    background-image: repeating-linear-gradient(
+      to bottom,
+      transparent 0 calc(var(--rule) - 1px),
+      var(--line) calc(var(--rule) - 1px) var(--rule)
+    );
+    box-shadow: inset 0 0 0 1px var(--line);
+  }
+  /* the margin rule printed on the paper. Half-strength accent: a 1px
+     line at --accent-hairline's 24% all but disappears on the card. */
+  .margin {
+    position: absolute;
+    inset-block: 0;
+    left: 14px;
+    width: 1px;
+    background: color-mix(in srgb, var(--accent) 50%, transparent);
+  }
+  .word {
+    position: absolute;
+    left: 19px;
+    /* to the edge: at 96px a word like "Storytelling" needs every pixel */
+    right: 0;
+    /* small box: the writing sits on the 2nd rule */
+    top: calc(var(--rule) + 2px);
+    font-family: var(--font-hand);
+    font-weight: 600;
+    font-size: 19px;
+    line-height: var(--rule);
+    color: var(--ink);
+    /* last resort for a single word longer than the line; labels still
+       wrap at their spaces first */
+    overflow-wrap: break-word;
+    /* written by hand, so a touch off the horizontal */
+    transform: rotate(-2deg);
+    transform-origin: left bottom;
+  }
+
+  @container nbcover (min-width: 160px) {
+    .margin {
+      left: 30px;
+    }
+    .word {
+      left: 42px;
+      right: 10px;
+      /* larger box: the writing sits on the 3rd rule, near the middle */
+      top: calc(var(--rule) * 2 - 1px);
+      font-size: 28px;
+    }
+  }
+</style>

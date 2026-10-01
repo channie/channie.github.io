@@ -16,18 +16,25 @@
      Latin leads the stack (Newsreader / Hanken), so CJK glyphs — absent
      from the Latin faces — fall through to LXGW WenKai TC (霞鶩文楷), a
      warm handwriting-style kai face. Mixed strings like "百靈果 Book Club"
-     split automatically: Latin in Newsreader, Chinese in WenKai. */
+     split automatically: Latin in Newsreader, Chinese in WenKai.
+     Use the EXACT family name the @font-face declares. @fontsource-variable
+     packages register '<Name> Variable' ('Hanken Grotesk Variable', 'Caveat
+     Variable'), not the Google Fonts name; a wrong name fails silently to
+     the next font in the stack. tests/font-families.test.ts checks this. */
   --font-display: 'Newsreader', 'LXGW WenKai TC', Georgia, serif;
-  --font-sans: 'Hanken Grotesk', 'LXGW WenKai TC', system-ui, -apple-system, sans-serif;
+  --font-sans: 'Hanken Grotesk Variable', 'LXGW WenKai TC', system-ui, -apple-system, sans-serif;
   /* Latin-only sans — no WenKai. For small UI chrome where a stray CJK
      glyph should use the neutral system CJK sans, not WenKai's
      handwriting kai. */
-  --font-sans-latin: 'Hanken Grotesk', system-ui, -apple-system, sans-serif;
+  --font-sans-latin: 'Hanken Grotesk Variable', system-ui, -apple-system, sans-serif;
   /* Handwriting — Caveat for Latin, falling through to WenKai for CJK
-     (both read as "written by hand"). The face itself loads only on
-     pages that import @fontsource-variable/caveat (the Listening diary);
-     elsewhere the stack quietly falls back. */
-  --font-hand: 'Caveat Variable', 'LXGW WenKai TC', cursive;
+     (both read as "written by hand"). The face loads only where it is
+     imported (the Listening diary, NotebookCover, the styleguide);
+     elsewhere the stack quietly falls back. Caveat swaps in after load,
+     so until then Latin shows in the platform's own handwriting face
+     (Segoe Print on Windows, Bradley Hand on Apple) rather than generic
+     `cursive`, which is Comic Sans on Windows. */
+  --font-hand: 'Caveat Variable', 'LXGW WenKai TC', 'Segoe Print', 'Bradley Hand', cursive;
 
   /* ---- Type scale (CONTENT area only) ----
      Semantic size tokens for the content components — page heads, prose,
@@ -47,6 +54,10 @@
   --text-prose: clamp(15px, 0.5vw + 13px, 16px); /* long-form blog body (larger than UI base) */
   --text-lg: clamp(16px, 0.6vw + 14px, 17px); /* card / tile / row titles */
   --text-xl: clamp(18px, 1vw + 15px, 21px); /* notes, quotes, episode titles */
+  /* A piece set apart with <Essay> (a story, a personal essay). It is set in
+     the display serif, which reads smaller than the sans at the same px, so
+     it sits well above --text-prose (between --text-xl's min and max). */
+  --text-essay: clamp(18px, 0.6vw + 15.5px, 19.5px);
   --text-2xl: clamp(21px, 1.6vw + 15px, 25px); /* section headings, post h2 */
   --text-3xl: clamp(24px, 2.4vw + 15px, 31px); /* featured / show titles */
   --text-4xl: clamp(29px, 3.4vw + 15px, 41px); /* page-head H1 */
@@ -67,6 +78,9 @@
      out-of-family tags (category 0.14em, postcard label) keep their own. */
   --tracking-eyebrow: 0.2em;
   --tracking-eyebrow-tight: 0.16em;
+  /* Small caps in running text (the feature's first line, <LeadIn>): just
+     enough air that the synthesized caps don't crowd each other. */
+  --tracking-small-caps: 0.03em;
 
   /* ---- Color: Terracotta (primary) ---- */
   --bg: #f4e9d6;          /* page background — warm cream */

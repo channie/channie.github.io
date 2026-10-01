@@ -1,0 +1,23 @@
+---
+/* ============================================================
+   LeadIn — sets the opening words of a piece in small caps, the
+   magazine way into an essay.
+
+     <LeadIn>I’m on stage, palms damp, holding my script.</LeadIn> As I …
+
+   Wrap a phrase or the first sentence you choose, rather than styling
+   "the first line": where a line breaks changes with screen width, so
+   a first-line rule stops mid-sentence at a different word on every
+   device. Newsreader (as self-hosted) has no true small caps, so the
+   browser synthesizes them; keep the lead-in to a sentence at most.
+   ============================================================ */
+---
+
+<span class="lead-in"><slot /></span>
+
+<style>
+  .lead-in {
+    font-variant-caps: small-caps;
+    letter-spacing: var(--tracking-small-caps);
+  }
+</style>

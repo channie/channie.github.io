@@ -99,6 +99,24 @@ h4 {
   margin-inline: auto;
 }
 
+/* Three-dot section break (an asterism in rajah dots). Global so a plain
+   .md post can use it as raw HTML and components (Essay) can render it:
+     <div class="brk-dots"><span></span><span></span><span></span></div>
+   Decorative: mark it aria-hidden where it is rendered by a component. */
+.brk-dots {
+  display: flex;
+  justify-content: center;
+  gap: 14px; /* off-scale by design: the dots' rhythm, not layout spacing */
+  margin: 2.6em 0;
+}
+.brk-dots span {
+  display: block;
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: var(--accent2);
+}
+
 /* Screen-reader-only (visually hidden, still announced) */
 .sr-only {
   position: absolute;

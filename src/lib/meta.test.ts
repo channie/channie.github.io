@@ -54,6 +54,37 @@ describe('truncateDescription', () => {
     expect(truncateDescription(once)).toBe(once);
   });
 
+  it('backs out of a quotation the cut would leave open', () => {
+    // the real case: "Show, Don't Tell"'s excerpt was previewed as
+    // `…in medias res, and “show…`, a dangling quote mark
+    const excerpt =
+      'I recently took a storytelling workshop. One of the assignments was a personal story ' +
+      'from a vivid moment in life: 400 words or less, in medias res, and “show, don’t tell.” ' +
+      'I wrote about something tender, something I haven’t shared.';
+    const out = truncateDescription(excerpt);
+    expect(out).toBe(
+      'I recently took a storytelling workshop. One of the assignments was a personal story ' +
+        'from a vivid moment in life: 400 words or less, in medias res, and…'
+    );
+    expect(out).not.toContain('“');
+  });
+
+  it('keeps a quotation that closes before the cut', () => {
+    const out = truncateDescription('She said “hello there” and then kept talking for a while', 40);
+    expect(out).toBe('She said “hello there” and then kept…');
+  });
+
+  it('treats straight double quotes the same way', () => {
+    const out = truncateDescription('He wrote "show, don’t tell" again and again', 20);
+    expect(out).toBe('He wrote…');
+  });
+
+  it('keeps the cut when the whole text sits inside one long open quotation', () => {
+    const out = truncateDescription('“' + 'word '.repeat(60), 30);
+    expect(out.startsWith('“word')).toBe(true);
+    expect(out.endsWith('…')).toBe(true);
+  });
+
   it('handles CJK, which has no spaces to break on', () => {
     const zh = '這本書用故事帶出死刑這個沉重的議題。'.repeat(20);
     const out = truncateDescription(zh);

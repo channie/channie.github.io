@@ -1,0 +1,78 @@
+---
+/* ============================================================
+   Essay — sets a piece of writing (a story, a personal essay) apart
+   from the post around it: an optional content warning, a generous
+   three-dot break, then the piece itself in the display serif at
+   --text-essay, so it reads as the work rather than as blog prose.
+
+     <Essay warning="domestic violence, suicide.">
+
+     <LeadIn>I’m on stage, palms damp, holding my script.</LeadIn> As I …
+
+     A few months earlier, …
+
+     </Essay>
+
+   `warning` is optional; without it the piece opens on the break.
+   Leave a blank line inside each tag so the paragraphs stay Markdown.
+   The piece's own paragraphs and lists take the serif; nested components
+   (a PullQuote, a Figure) keep their own type. The break is the shared
+   .brk-dots utility (global.css).
+   ============================================================ */
+interface Props {
+  /** content warning shown before the break, e.g. "domestic violence, suicide." */
+  warning?: string;
+}
+const { warning }: Props = Astro.props;
+---
+
+<div class="essay">
+  {
+    warning && (
+      <p class="warning" role="note">
+        <span class="warning-label">Content warning:</span> {warning}
+      </p>
+    )
+  }
+  <div class="brk-dots" aria-hidden="true"><span></span><span></span><span></span></div>
+  <div class="piece"><slot /></div>
+</div>
+
+<style>
+  /* Every selector starts at .essay so it outranks the post body's own
+     paragraph rules (.prose p / .fprose p) on specificity. The piece rule
+     takes only DIRECT children, so it styles the Markdown the author wrote
+     and never reaches into a nested component's own <p>. */
+  .essay .warning {
+    font-family: var(--font-sans);
+    font-size: var(--text-base);
+    font-style: italic;
+    line-height: 1.6;
+    color: var(--ink);
+    margin: var(--space-6) 0 0;
+    padding: var(--space-3) 0;
+    border-block: 1px solid var(--line);
+  }
+  .essay .warning-label {
+    font-weight: 600;
+  }
+  /* the room to take a breath between the warning and the piece: 80px on
+     wide pages, down to 48px on phones, where that much air on each side is
+     most of a screen. cqi = the .page container, per the house rule. */
+  .essay .brk-dots {
+    margin-block: clamp(var(--space-12), 8cqi, calc(var(--space-16) + var(--space-4)));
+  }
+  .essay .piece > :global(:is(p, ul, ol)) {
+    font-family: var(--font-display);
+    font-size: var(--text-essay);
+    line-height: 1.7;
+    color: var(--ink);
+    margin: 0 0 1.05em;
+  }
+  /* a loose list wraps its items in <p>; those take the list's type too
+     rather than falling back to the post body's sans */
+  .essay .piece > :global(:is(ul, ol) p) {
+    font: inherit;
+    color: inherit;
+  }
+</style>

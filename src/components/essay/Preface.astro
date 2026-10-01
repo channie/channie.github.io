@@ -1,0 +1,33 @@
+---
+/* ============================================================
+   Preface — the author's note before a piece of writing: where it
+   came from, why it is here. It keeps the post's own body face but
+   runs a step quieter (muted), so the piece that follows reads as the
+   main voice.
+
+     <Preface>
+
+     I recently took a storytelling workshop. …
+
+     </Preface>
+
+   Leave a blank line inside each tag so the paragraphs stay Markdown.
+   Usually followed by <Essay>.
+   ============================================================ */
+---
+
+<div class="preface"><slot /></div>
+
+<style>
+  /* `div.` lifts this one step above the post body's own paragraph
+     colour rule (.prose p / .fprose p), which would otherwise tie on
+     specificity and win or lose on stylesheet order. Direct children only,
+     so a nested component keeps its own colour. */
+  div.preface > :global(:is(p, ul, ol)) {
+    color: var(--muted);
+  }
+  /* a loose list's <li><p> keeps the muted colour too */
+  div.preface > :global(:is(ul, ol) p) {
+    color: inherit;
+  }
+</style>

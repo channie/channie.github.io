@@ -81,7 +81,7 @@ const experiments = defineCollection({
         /** feature only: credit line under the deck, e.g.
             "Words and photographs by Channie Wu" */
         byline: z.string().optional(),
-        /** mark exactly one post featured; otherwise the newest is */
+        /** mark at most one post featured (two fail the build); otherwise the newest is */
         featured: z.boolean().default(false),
         /** true hides the post from the site */
         draft: z.boolean().default(false),

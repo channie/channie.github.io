@@ -4,6 +4,8 @@ import { Image } from 'astro:assets';
 import BaseLayout from '../layouts/BaseLayout.astro';
 import PageHead from '../components/PageHead.astro';
 import ArrowLink from '../components/ArrowLink.astro';
+import NotebookCover from '../components/NotebookCover.astro';
+import { splitFeatured } from '../lib/experiments';
 
 const head = {
   eyebrow: 'Experimenting',
@@ -12,11 +14,10 @@ const head = {
     'Small projects, experiments, and AI workflows. Thinking out loud while it’s still in progress.',
 };
 
-const all = (await getCollection('experiments', ({ data }) => !data.draft)).sort(
-  (a, b) => b.data.date.valueOf() - a.data.date.valueOf()
+// the flagged post (at most one; two fail the build), else the newest
+const { featured, rest } = splitFeatured(
+  await getCollection('experiments', ({ data }) => !data.draft)
 );
-const featured = all.find((e) => e.data.featured) ?? all[0];
-const rest = all.filter((e) => e.id !== featured?.id);
 
 const fmt = (d: Date) =>
   new Intl.DateTimeFormat('en-US', {
@@ -79,7 +80,7 @@ const href = (id: string) => `/experimenting/${slugOf(id)}/`;
             {e.data.hero ? (
               <Image src={e.data.hero} alt="" widths={[96, 220, 440]} sizes="220px" />
             ) : (
-              <span class="tile small">{e.data.category}</span>
+              <NotebookCover label={e.data.category} />
             )}
           </div>
         </a>
@@ -115,29 +116,6 @@ const href = (id: string) => `/experimenting/${slugOf(id)}/`;
     height: 100%;
     object-fit: cover;
     transition: transform 0.5s var(--ease);
-  }
-
-  /* CSS fallback "cover" for posts without an image */
-  .tile {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    width: 100%;
-    height: 100%;
-    background: color-mix(in srgb, var(--accent) 10%, var(--card));
-    color: var(--accent);
-    font-family: var(--font-sans);
-    text-transform: uppercase;
-    letter-spacing: var(--tracking-eyebrow-tight);
-    font-weight: 700;
-    font-size: var(--text-xs);
-    text-align: center;
-    padding: var(--space-2);
-  }
-  .tile::before {
-    content: '✦';
-    color: var(--accent2);
-    margin-right: 6px;
   }
 
   /* ---- Featured article ---- */
@@ -278,6 +256,9 @@ const href = (id: string) => `/experimenting/${slugOf(id)}/`;
   .artrow:hover :global(.rowcta .arw) {
     transform: translateX(5px);
   }
+  /* thumbnail box: 96×96 phone, 200×128 tablet, 220×132 desktop (the
+     column widths are on .artrow). The styleguide's NotebookCover demo
+     mirrors these three sizes; change them together. */
   .arthumb {
     overflow: hidden;
     border-radius: var(--radius-media);
@@ -285,6 +266,13 @@ const href = (id: string) => `/experimenting/${slugOf(id)}/`;
     height: 96px;
   }
   .artrow:hover .arthumb img {
+    transform: scale(1.05);
+  }
+  /* the no-image cover answers the row hover like a photo does */
+  .arthumb :global(.nbcover) {
+    transition: transform 0.5s var(--ease);
+  }
+  .artrow:hover .arthumb :global(.nbcover) {
     transform: scale(1.05);
   }
 

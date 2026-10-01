@@ -19,9 +19,10 @@ export const DESCRIPTION_MAX = 160;
  * Trim a description for `<head>` without cutting a word in half.
  *
  * Returns the text unchanged when it already fits. Otherwise cuts at the
- * last word boundary that fits, drops any trailing punctuation left
- * dangling by the cut, and ends with an ellipsis — so the result reads as
- * a deliberate summary rather than a string that ran out of room.
+ * last word boundary that fits, backs out of a quotation the cut would
+ * leave open, drops any trailing punctuation left dangling by the cut,
+ * and ends with an ellipsis — so the result reads as a deliberate summary
+ * rather than a string that ran out of room.
  */
 export function truncateDescription(text: string, max: number = DESCRIPTION_MAX): string {
   const clean = text.replace(/\s+/g, ' ').trim();
@@ -36,6 +37,23 @@ export function truncateDescription(text: string, max: number = DESCRIPTION_MAX)
   const endsOnWord = /\s/.test(clean.charAt(room));
   const lastSpace = slice.lastIndexOf(' ');
   const cut = endsOnWord || lastSpace <= 0 ? slice : slice.slice(0, lastSpace);
+  const closed = withoutOpenQuote(cut);
 
-  return `${cut.replace(/[\s,;:.!?—–-]+$/, '')}…`;
+  return `${(closed.trim() ? closed : cut).replace(/[\s,;:.!?—–-]+$/, '')}…`;
+}
+
+/**
+ * Cut back to just before a quotation the text opens but never closes.
+ * Otherwise a preview can end on `and “show…`: a dangling quote mark, and
+ * the quoted words orphaned from their closing half. Curly quotes are
+ * matched by direction; straight double quotes by count. (A ’ inside an
+ * open ‘…’ quotation reads as its close; rare enough not to matter here.)
+ */
+function withoutOpenQuote(text: string): string {
+  for (const [open, close] of [['“', '”'], ['‘', '’']]) {
+    const at = text.lastIndexOf(open);
+    if (at !== -1 && text.indexOf(close, at) === -1) return text.slice(0, at);
+  }
+  if ((text.match(/"/g) ?? []).length % 2 === 1) return text.slice(0, text.lastIndexOf('"'));
+  return text;
 }

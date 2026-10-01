@@ -41,8 +41,9 @@ src/
   pages/       site routes
   styles/      tokens, global styles, and CJK font loading
 public/        static assets, social images, videos, robots.txt, and CNAME
-scripts/       podcast RSS snapshot refresh
-tests/         integration tests for RSS parsing
+scripts/       podcast RSS snapshot refresh, build-time CJK font subsetting and asset pruning
+tests/         unit and integration tests (RSS parsing, CJK subsetting, asset pruning,
+               font families, the refresh workflow)
 ```
 
 ## Deployment

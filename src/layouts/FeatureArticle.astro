@@ -159,6 +159,15 @@ const fmt = (date: Date) =>
     font-size: var(--text-xl);
     line-height: 1.4;
   }
+  /* a quote's paragraphs take the quote's type, not the body sans */
+  .fprose :global(blockquote p) {
+    font: inherit;
+    color: inherit;
+    margin: 0 0 0.6em;
+  }
+  .fprose :global(blockquote p:last-child) {
+    margin-bottom: 0;
+  }
 
   /* The opening drop cap. Applies to the post's first paragraph, so a
      feature post should OPEN ON PROSE, not on a component. */
@@ -173,6 +182,6 @@ const fmt = (date: Date) =>
   }
   .fprose > :global(p:first-of-type)::first-line {
     font-variant-caps: small-caps;
-    letter-spacing: 0.03em;
+    letter-spacing: var(--tracking-small-caps);
   }
 </style>
