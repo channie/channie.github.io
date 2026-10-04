@@ -7,20 +7,34 @@
     "imageFile": "26f73b394802.jpg"
   },
   "latest": {
-    "title": "Why Are So Many French Book Covers Blank?",
-    "description": "I've seen these book covers all over France. Cream colored or white, basically blank, just a title and the author's name. For the longest time I assumed they were for really old classics. But that’s actually not true. This episode goes into why so many French books have blank looking covers.",
-    "date": "2026-09-27T02:22:17.000Z",
-    "dateLabel": "Sep 27, 2026",
-    "durationSeconds": 1498,
-    "duration": "24:58",
-    "minutes": "25 min",
-    "audioUrl": "https://anchor.fm/s/114e11cd8/podcast/play/126355436/https%3A%2F%2Fd3ctxlq1ktw2nl.cloudfront.net%2Fstaging%2F2026-8-27%2F5529c7da-f342-6231-1e24-12c0323a4338.mp3",
-    "pageUrl": "https://podcasters.spotify.com/pod/show/french-curiosity/episodes/Why-Are-So-Many-French-Book-Covers-Blank-e3peihc",
-    "number": 14,
-    "image": "https://d3t3ozftmdmh3i.cloudfront.net/staging/podcast_uploaded_episode/46352646/46352646-1790475632472-ce57c67bed5ee.jpg",
-    "imageFile": "15a8db45acfe.jpg"
+    "title": "The Story of French Comics Starts With Mickey Mouse",
+    "description": "Why do French people love comics so much? I've wondered that for a long time, and it turns out there isn't one answer, there are a few, and they're all good stories. So I'm doing this one as a few short episodes instead of one long one. This first one is the origin story, and it surprisingly starts with Mickey Mouse.",
+    "date": "2026-10-04T05:09:12.000Z",
+    "dateLabel": "Oct 4, 2026",
+    "durationSeconds": 933,
+    "duration": "15:33",
+    "minutes": "16 min",
+    "audioUrl": "https://anchor.fm/s/114e11cd8/podcast/play/126779674/https%3A%2F%2Fd3ctxlq1ktw2nl.cloudfront.net%2Fstaging%2F2026-9-4%2F83db05ec-0fea-9af3-8fbf-59e67af68a38.mp3",
+    "pageUrl": "https://podcasters.spotify.com/pod/show/french-curiosity/episodes/The-Story-of-French-Comics-Starts-With-Mickey-Mouse-e3prgqq",
+    "number": 15,
+    "image": "https://d3t3ozftmdmh3i.cloudfront.net/staging/podcast_uploaded_episode/46352646/46352646-1791090539523-fa6a492fe4c6f.jpg",
+    "imageFile": "1dfa5d4c23de.jpg"
   },
   "episodes": [
+    {
+      "title": "The Story of French Comics Starts With Mickey Mouse",
+      "description": "Why do French people love comics so much? I've wondered that for a long time, and it turns out there isn't one answer, there are a few, and they're all good stories. So I'm doing this one as a few short episodes instead of one long one. This first one is the origin story, and it surprisingly starts with Mickey Mouse.",
+      "date": "2026-10-04T05:09:12.000Z",
+      "dateLabel": "Oct 4, 2026",
+      "durationSeconds": 933,
+      "duration": "15:33",
+      "minutes": "16 min",
+      "audioUrl": "https://anchor.fm/s/114e11cd8/podcast/play/126779674/https%3A%2F%2Fd3ctxlq1ktw2nl.cloudfront.net%2Fstaging%2F2026-9-4%2F83db05ec-0fea-9af3-8fbf-59e67af68a38.mp3",
+      "pageUrl": "https://podcasters.spotify.com/pod/show/french-curiosity/episodes/The-Story-of-French-Comics-Starts-With-Mickey-Mouse-e3prgqq",
+      "number": 15,
+      "image": "https://d3t3ozftmdmh3i.cloudfront.net/staging/podcast_uploaded_episode/46352646/46352646-1791090539523-fa6a492fe4c6f.jpg",
+      "imageFile": "1dfa5d4c23de.jpg"
+    },
     {
       "title": "Why Are So Many French Book Covers Blank?",
       "description": "I've seen these book covers all over France. Cream colored or white, basically blank, just a title and the author's name. For the longest time I assumed they were for really old classics. But that’s actually not true. This episode goes into why so many French books have blank looking covers.",
@@ -218,5 +232,5 @@
       "imageFile": "c4a72e6fabe6.jpg"
     }
   ],
-  "fetchedAt": "2026-09-27T14:38:55.689Z"
+  "fetchedAt": "2026-10-04T14:44:05.304Z"
 }
