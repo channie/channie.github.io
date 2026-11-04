@@ -7,20 +7,34 @@
     "imageFile": "26f73b394802.jpg"
   },
   "latest": {
-    "title": "What’s Actually Behind the French High School Protests",
-    "description": "The French high school protests have been all over the news this autumn. Not enough teachers, 36 kids to a class, no AC in a heatwave. Those are the headlines. Underneath them is a 17-year-old who fainted during her exam, a teacher who walked away after twelve years, and one odd fact: French high schoolers don’t have the right to strike. So what exactly are they doing out there?",
-    "date": "2026-10-16T16:19:36.000Z",
-    "dateLabel": "Oct 16, 2026",
-    "durationSeconds": 2388,
-    "duration": "39:48",
-    "minutes": "40 min",
-    "audioUrl": "https://anchor.fm/s/114e11cd8/podcast/play/127583837/https%3A%2F%2Fd3ctxlq1ktw2nl.cloudfront.net%2Fstaging%2F2026-9-16%2F795f5565-74be-97f8-09f8-d66b2de6df87.mp3",
-    "pageUrl": "https://podcasters.spotify.com/pod/show/french-curiosity/episodes/Whats-Actually-Behind-the-French-High-School-Protests-e3qk24t",
-    "number": 16,
-    "image": "https://d3t3ozftmdmh3i.cloudfront.net/staging/podcast_uploaded_episode/46352646/46352646-1792167535895-438b9cbc92e3b.jpg",
-    "imageFile": "2db7cec074a4.jpg"
+    "title": "French Comics #2 - Why Are So Many French Comics for Adults?",
+    "description": "Why are so many comics in France made for adults? A lot of it goes back to one guy, René Goscinny, the guy who wrote Astérix. In 1956 he stood up for comic artists’ rights and got fired for it. Twelve years later he was the boss, and his own artists turned on him.",
+    "date": "2026-11-03T23:35:50.000Z",
+    "dateLabel": "Nov 3, 2026",
+    "durationSeconds": 988,
+    "duration": "16:28",
+    "minutes": "16 min",
+    "audioUrl": "https://anchor.fm/s/114e11cd8/podcast/play/128724852/https%3A%2F%2Fd3ctxlq1ktw2nl.cloudfront.net%2Fstaging%2F2026-10-3%2F39081597-3eda-3acf-e16b-6a5a90ff4a9a.mp3",
+    "pageUrl": "https://podcasters.spotify.com/pod/show/french-curiosity/episodes/French-Comics-2---Why-Are-So-Many-French-Comics-for-Adults-e3rmsdk",
+    "number": 17,
+    "image": "https://d3t3ozftmdmh3i.cloudfront.net/staging/podcast_uploaded_episode/46352646/46352646-1793748832800-adf0cf35ae295.jpg",
+    "imageFile": "32fb47524417.jpg"
   },
   "episodes": [
+    {
+      "title": "French Comics #2 - Why Are So Many French Comics for Adults?",
+      "description": "Why are so many comics in France made for adults? A lot of it goes back to one guy, René Goscinny, the guy who wrote Astérix. In 1956 he stood up for comic artists’ rights and got fired for it. Twelve years later he was the boss, and his own artists turned on him.",
+      "date": "2026-11-03T23:35:50.000Z",
+      "dateLabel": "Nov 3, 2026",
+      "durationSeconds": 988,
+      "duration": "16:28",
+      "minutes": "16 min",
+      "audioUrl": "https://anchor.fm/s/114e11cd8/podcast/play/128724852/https%3A%2F%2Fd3ctxlq1ktw2nl.cloudfront.net%2Fstaging%2F2026-10-3%2F39081597-3eda-3acf-e16b-6a5a90ff4a9a.mp3",
+      "pageUrl": "https://podcasters.spotify.com/pod/show/french-curiosity/episodes/French-Comics-2---Why-Are-So-Many-French-Comics-for-Adults-e3rmsdk",
+      "number": 17,
+      "image": "https://d3t3ozftmdmh3i.cloudfront.net/staging/podcast_uploaded_episode/46352646/46352646-1793748832800-adf0cf35ae295.jpg",
+      "imageFile": "32fb47524417.jpg"
+    },
     {
       "title": "What’s Actually Behind the French High School Protests",
       "description": "The French high school protests have been all over the news this autumn. Not enough teachers, 36 kids to a class, no AC in a heatwave. Those are the headlines. Underneath them is a 17-year-old who fainted during her exam, a teacher who walked away after twelve years, and one odd fact: French high schoolers don’t have the right to strike. So what exactly are they doing out there?",
@@ -246,5 +260,5 @@
       "imageFile": "c4a72e6fabe6.jpg"
     }
   ],
-  "fetchedAt": "2026-10-17T12:52:55.980Z"
+  "fetchedAt": "2026-11-04T17:00:32.629Z"
 }
