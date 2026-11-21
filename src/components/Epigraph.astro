@@ -1,0 +1,66 @@
+---
+/* ============================================================
+   Epigraph — a short quotation with its attribution and, for a
+   quote that isn't in English, a translation beneath it:
+   quote → "— Name" → translation.
+
+   It sets NO type of its own: family, size, colour and measure
+   all inherit, so it takes on the voice of wherever it is
+   placed (PageHead sets it in the intro style). It owns only
+   the structure — the quote marks, the attribution's size and
+   the gaps between the three lines.
+
+   Quote marks are drawn by CSS per language (« » for French),
+   so pass the bare text of the quote and the translation.
+   ============================================================ */
+interface Props {
+  /** the quotation, without quote marks */
+  text: string;
+  /** BCP-47 lang of `text` when it isn't English (e.g. "fr") */
+  lang?: string;
+  /** who said it — rendered as "— Name" */
+  by: string;
+  /** English translation, without quote marks — shown under the attribution */
+  translation?: string;
+}
+const { text, lang, by, translation }: Props = Astro.props;
+---
+
+<figure class="epigraph">
+  <blockquote lang={lang}><p>{text}</p></blockquote>
+  <figcaption>
+    <span class="by">— {by}</span>
+    {translation && <q class="translation">{translation}</q>}
+  </figcaption>
+</figure>
+
+<style>
+  .epigraph {
+    quotes: '“' '”';
+  }
+  /* French guillemets sit off the text by a no-break space (\a0), so a
+     mark can never be left alone at the start or end of a line. */
+  .epigraph blockquote:lang(fr) {
+    quotes: '\ab\a0' '\a0\bb';
+  }
+  .epigraph blockquote p::before {
+    content: open-quote;
+  }
+  .epigraph blockquote p::after {
+    content: close-quote;
+  }
+
+  .epigraph figcaption {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-3);
+    margin-top: var(--space-2);
+  }
+  .by {
+    font-size: var(--text-sm);
+  }
+  /* <q> draws its own marks from `quotes`; block so it sits on its own line */
+  .translation {
+    display: block;
+  }
+</style>

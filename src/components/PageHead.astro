@@ -3,10 +3,14 @@
    PageHead — the inner-page heading block: eyebrow + italic <h1>
    + intro paragraph. This is the single <h1> for inner pages.
    Type scales by container tier.
+   `epigraph` puts a quotation (with attribution + translation) in
+   the intro's place, set in the same intro style — the Reading page.
    `centered` puts the whole block on a center axis (the Podcast
    page's "everything on one axis" layout).
    ============================================================ */
+import type { ComponentProps } from 'astro/types';
 import Eyebrow from './Eyebrow.astro';
+import Epigraph from './Epigraph.astro';
 
 interface Props {
   eyebrow: string;
@@ -14,16 +18,30 @@ interface Props {
   intro?: string;
   /** BCP-47 lang for the intro line when it isn't English (e.g. "zh-Hant"). */
   introLang?: string;
+  /** a quotation shown INSTEAD of `intro`, in the intro's style */
+  epigraph?: ComponentProps<typeof Epigraph>;
   /** center the block instead of the default left alignment */
   centered?: boolean;
 }
-const { eyebrow, title, intro, introLang, centered = false } = Astro.props;
+const { eyebrow, title, intro, introLang, epigraph, centered = false } = Astro.props;
 ---
 
 <header class:list={['page-head', { centered }]}>
   <Eyebrow>{eyebrow}</Eyebrow>
   <h1>{title}</h1>
-  {intro && <p class="intro" lang={introLang}>{intro}</p>}
+  {
+    epigraph ? (
+      <div class="intro">
+        <Epigraph {...epigraph} />
+      </div>
+    ) : (
+      intro && (
+        <p class="intro" lang={introLang}>
+          {intro}
+        </p>
+      )
+    )
+  }
 </header>
 
 <style>

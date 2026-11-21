@@ -7,8 +7,19 @@ import ReadingFlip from '../components/ReadingFlip.astro';
 const head = {
   eyebrow: 'Reading',
   title: 'Books that made a difference',
-  intro:
+  // Search + social description only. The epigraph below took the intro's
+  // place on the page, and a quotation makes a poor search snippet.
+  description:
     'Short notes, quotes, and voice postcards from books that left an impression.',
+  // Flaubert, in a letter to Mlle Leroyer de Chantepie. Bare text: the
+  // Epigraph component draws the quote marks.
+  epigraph: {
+    text: 'Ne lisez pas, comme les enfants lisent, pour vous amuser, ni comme les ambitieux lisent, pour vous instruire. Non, lisez pour vivre.',
+    lang: 'fr',
+    by: 'Gustave Flaubert',
+    translation:
+      'Do not read, as children do, to amuse yourself, or like the ambitious, for the purpose of instruction. Read to live.',
+  },
 };
 
 const books = (await getCollection('books', ({ data }) => !data.draft)).sort(
@@ -16,9 +27,9 @@ const books = (await getCollection('books', ({ data }) => !data.draft)).sort(
 );
 ---
 
-<BaseLayout title="Reading" active="Reading" description={head.intro}>
+<BaseLayout title="Reading" active="Reading" description={head.description}>
   <div class="col">
-    <PageHead eyebrow={head.eyebrow} title={head.title} intro={head.intro} />
+    <PageHead eyebrow={head.eyebrow} title={head.title} epigraph={head.epigraph} />
   </div>
   {/* The flip lives outside .col so the "book" spread can be wider than the
      text column — it centres itself (see ReadingFlip's .readstage). */}
