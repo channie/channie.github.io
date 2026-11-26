@@ -5,7 +5,10 @@
    colour (carnelian red in Terracotta) and the post's category
    handwritten on one of the lines.
 
-     <NotebookCover label={post.data.category} />
+     <NotebookCover label={post.data.coverLabel ?? post.data.category} />
+
+   A post can write something else on its cover with `coverLabel`
+   ("Storytelling 2.0"); the category in the meta line is unchanged.
 
    It fills whatever box it is placed in (the list's thumbnail sizes
    it; in an unsized box it falls back to the thumbnail's 5:3) and

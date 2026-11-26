@@ -80,7 +80,7 @@ const href = (id: string) => `/experimenting/${slugOf(id)}/`;
             {e.data.hero ? (
               <Image src={e.data.hero} alt="" widths={[96, 220, 440]} sizes="220px" />
             ) : (
-              <NotebookCover label={e.data.category} />
+              <NotebookCover label={e.data.coverLabel ?? e.data.category} />
             )}
           </div>
         </a>

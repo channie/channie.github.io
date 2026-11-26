@@ -41,6 +41,9 @@ const experiments = defineCollection({
         category: z.string(),
         /** 1–2 sentences shown in the list + used as the meta description */
         excerpt: z.string(),
+        /** the handwritten word(s) on the notebook-page list thumbnail (shown
+            when the post has no `hero`). Defaults to `category`. */
+        coverLabel: z.string().optional(),
         /** estimated reading time, e.g. "6 min" */
         read: z.string().optional(),
         /** hero image: a co-located `./file` (or a shared `../../../assets/...`) */

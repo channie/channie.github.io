@@ -14,6 +14,8 @@
      </Essay>
 
    `warning` is optional; without it the piece opens on the break.
+   `leadingBreak={false}` drops that break, for a piece that opens the
+   post with nothing before it (its note comes after, in <Afterword>).
    Leave a blank line inside each tag so the paragraphs stay Markdown.
    The piece's own paragraphs and lists take the serif; nested components
    (a PullQuote, a Figure) keep their own type. The break is the shared
@@ -22,8 +24,11 @@
 interface Props {
   /** content warning shown before the break, e.g. "domestic violence, suicide." */
   warning?: string;
+  /** the three-dot break before the piece (default true). Turn it off when
+      nothing precedes the piece, so the break doesn't sit under the post header. */
+  leadingBreak?: boolean;
 }
-const { warning }: Props = Astro.props;
+const { warning, leadingBreak = true }: Props = Astro.props;
 ---
 
 <div class="essay">
@@ -34,7 +39,11 @@ const { warning }: Props = Astro.props;
       </p>
     )
   }
-  <div class="brk-dots" aria-hidden="true"><span></span><span></span><span></span></div>
+  {
+    leadingBreak && (
+      <div class="brk-dots" aria-hidden="true"><span></span><span></span><span></span></div>
+    )
+  }
   <div class="piece"><slot /></div>
 </div>
 

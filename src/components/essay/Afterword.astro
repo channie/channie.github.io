@@ -1,0 +1,57 @@
+---
+/* ============================================================
+   Afterword — the author's note AFTER a piece of writing: a long
+   three-dot break (128px each side, deliberately more than Essay's),
+   a small label, then the note in the same quiet voice as Preface, so
+   it reads as secondary to the piece above it.
+
+     <Essay leadingBreak={false}>
+     …the piece…
+     </Essay>
+
+     <Afterword label="Notes">
+
+     This is a piece I wrote for …
+
+     </Afterword>
+
+   `label` defaults to "Notes" (shown uppercase by Eyebrow) and also
+   names the <aside> for screen readers, since the label itself is not
+   a heading. Leave a blank line inside the tag so the paragraphs stay
+   Markdown.
+
+   Little here is restyled by hand: the break is the shared .brk-dots
+   (global.css) with this component's own margin, the label is Eyebrow,
+   and the muted body IS Preface (one muted-paragraph rule, two users).
+   ============================================================ */
+import Eyebrow from '../Eyebrow.astro';
+import Preface from './Preface.astro';
+
+interface Props {
+  /** the small label above the note */
+  label?: string;
+}
+const { label = 'Notes' }: Props = Astro.props;
+---
+
+<aside class="afterword" aria-label={label}>
+  <div class="brk-dots" aria-hidden="true"><span></span><span></span><span></span></div>
+  {/* a div, not a <p>: the post body's own `.prose p` would restyle a paragraph */}
+  <Eyebrow as="div" class="afterword-label">{label}</Eyebrow>
+  <Preface><slot /></Preface>
+</aside>
+
+<style>
+  /* a real pause between the piece and the note: 128px each side at every
+     width, double the scale's largest step. Unlike Essay's break it does
+     NOT shrink on phones; that was chosen from side-by-side renders. */
+  .afterword .brk-dots {
+    margin-block: calc(var(--space-16) * 2);
+  }
+  /* quieter than the accent eyebrow a page opens with: this labels a
+     footnote to the piece, not a section */
+  .afterword :global(.afterword-label) {
+    color: var(--muted);
+    margin-bottom: var(--space-4);
+  }
+</style>
